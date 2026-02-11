@@ -155,7 +155,7 @@ workflow test {
     output {}
 }
 </code></pre>
-`, addedIn: "0.1.0" }, { source: "wdlLint", id: "ElementSpacing", tags: ["Spacing", "Style"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that WDL elements are spaced appropriately.</p>\n<h3>Why is this Bad?</h3>\n<p>There should be a blank line between each WDL element at the root indentation level (such as the import block and any task/workflow definitions) and between sections of a WDL task or workflow. Never have a blank line when indentation levels are changing (such as between the opening of a workflow definition and the meta section). There should also never be blanks within a <code>meta</code>, <code>parameter_meta</code>, <code>input</code>, <code>output</code>, <code>runtime</code>, <code>requirements</code>, or <code>hints</code> section. For workflows, the <code>workflow body</code> includes any private declarations, call statements, conditional statements, and scatter statements. A <code>task body</code> is any and all private declarations. Within a workflow or task body, individual elements may optionally be separated by a blank line.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow determine_jimmy_age {\n\n    meta {\n\n        description: "Determines the current age of Jimmy."\n\n        outputs: {\n            age: "The age of Jimmy."\n\n        }\n\n    }\n\n    output {\n        Int age = 55\n    }\n}\n</code></pre>\n<p>Use instead:</p>\n<pre><code class="language-wdl">version 1.2\n\nworkflow determine_jimmy_age {\n    meta {\n        description: "Determines the current age of Jimmy."\n        outputs: {\n            age: "The age of Jimmy."\n        }\n    }\n\n    output {\n        Int age = 55\n    }\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlLint", id: "EndingNewline", tags: ["Spacing", "Portability"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that documents end with a single newline character.</p>\n<h3>Why is this Bad?</h3>\n<p>The file should end with one and only one newline character to conform to POSIX standards. See <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206">https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206</a>.</p>\n', addedIn: "0.1.0" }, { source: "wdlLint", id: "ExpectedRuntimeKeys", tags: ["Completeness", "Deprecated"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that <code>runtime</code> sections have the appropriate keys.</p>\n<h3>Why is this Bad?</h3>\n<p>The behavior of this rule is different depending on the WDL version:</p>\n<p>For WDL v1.0 documents, the <code>docker</code> and <code>memory</code> keys are recommended, but the inclusion of any number of other keys is permitted.</p>\n<p>For WDL v1.1 documents:</p>\n<ul>\n<li>A list of mandatory, reserved keywords will be recommended for inclusion if they are not present. Here, \'mandatory\' refers to the requirement that all execution engines support this key\u2014not that the key must be present in the <code>runtime</code> section.</li>\n<li>Optional, reserved "hint" keys are also permitted but not flagged when they are missing (as their support in execution engines is not guaranteed).</li>\n<li>The WDL v1.1 specification deprecates the inclusion of non-reserved keys in a  <code>runtime</code> section. As such, any non-reserved keys will be flagged for removal.</li>\n</ul>\n<p>For WDL v1.2 documents and later, this rule does not evaluate because <code>runtime</code> sections were deprecated in this version.</p>\n<h3>Examples</h3>\n<p>The following is missing a mandatory key:</p>\n<pre><code class="language-wdl">version 1.1\n\ntask missing_required_keys {\n    meta {}\n\n    command &lt;&lt;&lt;&gt;&gt;&gt;\n\n    output {}\n\n    runtime {}  # Missing `container` key\n}\n</code></pre>\n<p>The following has an unexpected key:</p>\n<pre><code class="language-wdl">version 1.1\n\ntask unexpected_runtime_key {\n    meta {}\n\n    command &lt;&lt;&lt;&gt;&gt;&gt;\n\n    output {}\n\n    runtime {\n        container: "ubuntu"\n        foo: "bar"\n    }\n}\n</code></pre>\n<h3>Configuration</h3>\n<h4><code>allowed_runtime_keys</code></h4>\n<p>List of keys to ignore in the <a href="crate::rules::ExpectedRuntimeKeysRule."><code>ExpectedRuntimeKeys</code></a> lint.</p>\n<h2>Example</h2>\n<pre><code class="language-toml">allowed_runtime_keys = ["foo"]\n</code></pre>\n<p>Default: <code>[]</code></p>\n', addedIn: "0.4.0" }, { source: "wdlLint", id: "ExpressionSpacing", tags: ["Spacing", "Style"], descriptionHtml: `<h3>What it Does</h3>
+`, addedIn: "0.1.0" }, { source: "wdlLint", id: "ElementSpacing", tags: ["Spacing", "Style"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that WDL elements are spaced appropriately.</p>\n<h3>Why is this Bad?</h3>\n<p>There should be a blank line between each WDL element at the root indentation level (such as the import block and any task/workflow definitions) and between sections of a WDL task or workflow. Never have a blank line when indentation levels are changing (such as between the opening of a workflow definition and the meta section). There should also never be blanks within a <code>meta</code>, <code>parameter_meta</code>, <code>input</code>, <code>output</code>, <code>runtime</code>, <code>requirements</code>, or <code>hints</code> section. For workflows, the <code>workflow body</code> includes any private declarations, call statements, conditional statements, and scatter statements. A <code>task body</code> is any and all private declarations. Within a workflow or task body, individual elements may optionally be separated by a blank line.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow determine_jimmy_age {\n\n    meta {\n\n        description: "Determines the current age of Jimmy."\n\n        outputs: {\n            age: "The age of Jimmy."\n\n        }\n\n    }\n\n    output {\n        Int age = 55\n    }\n}\n</code></pre>\n<p>Use instead:</p>\n<pre><code class="language-wdl">version 1.2\n\nworkflow determine_jimmy_age {\n    meta {\n        description: "Determines the current age of Jimmy."\n        outputs: {\n            age: "The age of Jimmy."\n        }\n    }\n\n    output {\n        Int age = 55\n    }\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlLint", id: "EndingNewline", tags: ["Spacing", "Portability"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that documents end with a single newline character.</p>\n<h3>Why is this Bad?</h3>\n<p>The file should end with one and only one newline character to conform to POSIX standards. See <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206">https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206</a>.</p>\n', addedIn: "0.1.0" }, { source: "wdlLint", id: "ExpectedRuntimeKeys", tags: ["Completeness", "Deprecated"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that <code>runtime</code> sections have the appropriate keys.</p>\n<h3>Why is this Bad?</h3>\n<p>The behavior of this rule is different depending on the WDL version:</p>\n<p>For WDL v1.0 documents, the <code>docker</code> and <code>memory</code> keys are recommended, but the inclusion of any number of other keys is permitted.</p>\n<p>For WDL v1.1 documents:</p>\n<ul>\n<li>A list of mandatory, reserved keywords will be recommended for inclusion if they are not present. Here, \'mandatory\' refers to the requirement that all execution engines support this key\u2014not that the key must be present in the <code>runtime</code> section.</li>\n<li>Optional, reserved "hint" keys are also permitted but not flagged when they are missing (as their support in execution engines is not guaranteed).</li>\n<li>The WDL v1.1 specification deprecates the inclusion of non-reserved keys in a  <code>runtime</code> section. As such, any non-reserved keys will be flagged for removal.</li>\n</ul>\n<p>For WDL v1.2 documents and later, this rule does not evaluate because <code>runtime</code> sections were deprecated in this version.</p>\n<h3>Examples</h3>\n<p>The following is missing a mandatory key:</p>\n<pre><code class="language-wdl">version 1.1\n\ntask missing_required_keys {\n    meta {}\n\n    command &lt;&lt;&lt;&gt;&gt;&gt;\n\n    output {}\n\n    runtime {}  # Missing `container` key\n}\n</code></pre>\n<p>The following has an unexpected key:</p>\n<pre><code class="language-wdl">version 1.1\n\ntask unexpected_runtime_key {\n    meta {}\n\n    command &lt;&lt;&lt;&gt;&gt;&gt;\n\n    output {}\n\n    runtime {\n        container: "ubuntu"\n        foo: "bar"\n    }\n}\n</code></pre>\n<h3>Configuration</h3>\n<h4><code>allowed_runtime_keys</code> (Default: <code>[]</code>)</h4>\n<p>List of keys to ignore in the <a href="crate::rules::ExpectedRuntimeKeysRule."><code>ExpectedRuntimeKeys</code></a> lint.</p>\n<h5>Example</h5>\n<pre><code class="language-toml">allowed_runtime_keys = ["foo"]\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlLint", id: "ExpressionSpacing", tags: ["Spacing", "Style"], descriptionHtml: `<h3>What it Does</h3>
 <p>Ensures that WDL expressions are properly spaced.</p>
 <h3>Why is this Bad?</h3>
 <p>Proper spacing is important for readability and consistency. This rule ensures that expressions are spaced properly.</p>
@@ -420,7 +420,7 @@ workflow formatting {
     output {}
 }
 </code></pre>
-`, addedIn: "0.7.0" }, { source: "wdlLint", id: "Whitespace", tags: ["Spacing", "Style"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that a document does not contain undesired whitespace.</p>\n<h3>Why is this Bad?</h3>\n<p>Whitespace should be used judiciously. Spurious whitespace can cause issues with parsing, automation, and rendering. There should never be trailing whitespace at the end of lines and blank lines should be completely empty with no whitespace characters between newlines. There should be at most one empty line in a row.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n# Extra trailing whitespace\n\n    output {}\n}\n</code></pre>\n<p>Use instead:</p>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.1.0" }], allVersions: ["0.1.0", "0.3.0", "0.4.0", "0.5.0", "0.6.0", "0.7.0", "0.9.0", "0.10.0", "0.12.0", "0.17.0"], currentVersion: "wdl-lint @ main (rev e8318a8d)", filteredVersion: 9 }, wdlAnalysis: { allLints: [{ source: "wdlAnalysis", id: "UnnecessaryFunctionCall", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that function calls are necessary.</p>\n<h3>Why is this Bad?</h3>\n<p>Unnecessary function calls may impact evaluation performance.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    # Calls to `defined` on values that are statically\n    # known to be non-None are unnecessary.\n    Boolean exists = defined("hello")\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.6.0" }, { source: "wdlAnalysis", id: "UnusedCall", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that outputs of a call statement are used in the declaring workflow.</p>\n<h3>Why is this Bad?</h3>\n<p>Unused calls may cause unnecessary consumption of compute resources.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    # The output of `do_work` is never used\n    call do_work\n\n    output {}\n}\n\ntask do_work {\n    command &lt;&lt;&lt;&gt;&gt;&gt;\n\n    output {\n        Int x = 0\n    }\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UnusedDeclaration", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that private declarations in tasks or workspaces are used within the declaring task or workspace.</p>\n<h3>Why is this Bad?</h3>\n<p>Unused private declarations degrade evaluation performance and reduce the clarity of the code.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    String unused = "this will produce a warning"\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UnusedImport", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that import namespaces are used in the importing document.</p>\n<h3>Why is this Bad?</h3>\n<p>Imported WDL documents should be used in the document that imports them. Unused imports impact parsing and evaluation performance.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nimport "example2.wdl"\n\nworkflow example {\n    meta {}\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UnusedInput", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that task or workspace inputs are used within the declaring task or workspace.</p>\n<h3>Why is this Bad?</h3>\n<p>Unused inputs degrade evaluation performance and reduce the clarity of the code. Unused file inputs in tasks can also cause unnecessary file localizations.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    inputs {\n        String unused\n    }\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UsingFallbackVersion", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Warns if interpretation of a document with an unsupported version falls back to a default.</p>\n<h3>Why is this Bad?</h3>\n<p>A document with an unsupported version may have unpredictable behavior if interpreted as a different version.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl"># Not a valid version. If a fallback version is configured,\n# the document will be interpreted as that version.\nversion 3.0\n\nworkflow example {\n    meta {}\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.10.0" }], allVersions: ["0.4.0", "0.6.0", "0.10.0"], currentVersion: "wdl-analysis @ main (rev e8318a8d)", filteredVersion: 2 } };
+`, addedIn: "0.7.0" }, { source: "wdlLint", id: "Whitespace", tags: ["Spacing", "Style"], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that a document does not contain undesired whitespace.</p>\n<h3>Why is this Bad?</h3>\n<p>Whitespace should be used judiciously. Spurious whitespace can cause issues with parsing, automation, and rendering. There should never be trailing whitespace at the end of lines and blank lines should be completely empty with no whitespace characters between newlines. There should be at most one empty line in a row.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n# Extra trailing whitespace\n\n    output {}\n}\n</code></pre>\n<p>Use instead:</p>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.1.0" }], allVersions: ["0.1.0", "0.3.0", "0.4.0", "0.5.0", "0.6.0", "0.7.0", "0.9.0", "0.10.0", "0.12.0", "0.17.0"], currentVersion: "wdl-lint @ main (rev 61018df9)", filteredVersion: 9 }, wdlAnalysis: { allLints: [{ source: "wdlAnalysis", id: "UnnecessaryFunctionCall", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that function calls are necessary.</p>\n<h3>Why is this Bad?</h3>\n<p>Unnecessary function calls may impact evaluation performance.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    # Calls to `defined` on values that are statically\n    # known to be non-None are unnecessary.\n    Boolean exists = defined("hello")\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.6.0" }, { source: "wdlAnalysis", id: "UnusedCall", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that outputs of a call statement are used in the declaring workflow.</p>\n<h3>Why is this Bad?</h3>\n<p>Unused calls may cause unnecessary consumption of compute resources.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    # The output of `do_work` is never used\n    call do_work\n\n    output {}\n}\n\ntask do_work {\n    command &lt;&lt;&lt;&gt;&gt;&gt;\n\n    output {\n        Int x = 0\n    }\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UnusedDeclaration", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that private declarations in tasks or workspaces are used within the declaring task or workspace.</p>\n<h3>Why is this Bad?</h3>\n<p>Unused private declarations degrade evaluation performance and reduce the clarity of the code.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    String unused = "this will produce a warning"\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UnusedImport", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that import namespaces are used in the importing document.</p>\n<h3>Why is this Bad?</h3>\n<p>Imported WDL documents should be used in the document that imports them. Unused imports impact parsing and evaluation performance.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nimport "example2.wdl"\n\nworkflow example {\n    meta {}\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UnusedInput", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Ensures that task or workspace inputs are used within the declaring task or workspace.</p>\n<h3>Why is this Bad?</h3>\n<p>Unused inputs degrade evaluation performance and reduce the clarity of the code. Unused file inputs in tasks can also cause unnecessary file localizations.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl">version 1.2\n\nworkflow example {\n    meta {}\n\n    inputs {\n        String unused\n    }\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.4.0" }, { source: "wdlAnalysis", id: "UsingFallbackVersion", tags: [], descriptionHtml: '<h3>What it Does</h3>\n<p>Warns if interpretation of a document with an unsupported version falls back to a default.</p>\n<h3>Why is this Bad?</h3>\n<p>A document with an unsupported version may have unpredictable behavior if interpreted as a different version.</p>\n<h3>Examples</h3>\n<pre><code class="language-wdl"># Not a valid version. If a fallback version is configured,\n# the document will be interpreted as that version.\nversion 3.0\n\nworkflow example {\n    meta {}\n\n    output {}\n}\n</code></pre>\n', addedIn: "0.10.0" }], allVersions: ["0.4.0", "0.6.0", "0.10.0"], currentVersion: "wdl-analysis @ main (rev 61018df9)", filteredVersion: 2 } };
 
 // node_modules/alpinejs/dist/module.esm.js
 var flushPending = false;
@@ -9218,11 +9218,11 @@ function toArray(x) {
 async function normalizeGetter(p2) {
   return Promise.resolve(typeof p2 === "function" ? p2() : p2).then((r) => r.default || r);
 }
-function isPlainLang(lang) {
-  return !lang || ["plaintext", "txt", "text", "plain"].includes(lang);
+function isPlainLang(lang2) {
+  return !lang2 || ["plaintext", "txt", "text", "plain"].includes(lang2);
 }
-function isSpecialLang(lang) {
-  return lang === "ansi" || isPlainLang(lang);
+function isSpecialLang(lang2) {
+  return lang2 === "ansi" || isPlainLang(lang2);
 }
 function isNoneTheme(theme) {
   return theme === "none";
@@ -9420,20 +9420,20 @@ var GrammarState = class _GrammarState {
   /**
    * Static method to create a initial grammar state.
    */
-  static initial(lang, themes) {
+  static initial(lang2, themes) {
     return new _GrammarState(
       Object.fromEntries(toArray(themes).map((theme) => [theme, INITIAL])),
-      lang
+      lang2
     );
   }
   constructor(...args) {
     if (args.length === 2) {
-      const [stacksMap, lang] = args;
-      this.lang = lang;
+      const [stacksMap, lang2] = args;
+      this.lang = lang2;
       this._stacks = stacksMap;
     } else {
-      const [stack, lang, theme] = args;
-      this.lang = lang;
+      const [stack, lang2, theme] = args;
+      this.lang = lang2;
       this._stacks = { [theme]: stack };
     }
   }
@@ -10038,11 +10038,11 @@ function codeToTokensBase(internal, code, options = {}) {
   const {
     theme: themeName = internal.getLoadedThemes()[0]
   } = options;
-  const lang = internal.resolveLangAlias(options.lang || "text");
-  if (isPlainLang(lang) || isNoneTheme(themeName))
+  const lang2 = internal.resolveLangAlias(options.lang || "text");
+  if (isPlainLang(lang2) || isNoneTheme(themeName))
     return splitLines(code).map((line) => [{ content: line[0], offset: line[1] }]);
   const { theme, colorMap } = internal.setTheme(themeName);
-  if (lang === "ansi")
+  if (lang2 === "ansi")
     return tokenizeAnsiWithTheme(theme, code, options);
   const _grammar = internal.getLanguage(options.lang || "text");
   if (options.grammarState) {
@@ -10061,15 +10061,15 @@ function getLastGrammarState(...args) {
   }
   const [internal, code, options = {}] = args;
   const {
-    lang = "text",
+    lang: lang2 = "text",
     theme: themeName = internal.getLoadedThemes()[0]
   } = options;
-  if (isPlainLang(lang) || isNoneTheme(themeName))
+  if (isPlainLang(lang2) || isNoneTheme(themeName))
     throw new ShikiError("Plain language does not have grammar state");
-  if (lang === "ansi")
+  if (lang2 === "ansi")
     throw new ShikiError("ANSI language does not have grammar state");
   const { theme, colorMap } = internal.setTheme(themeName);
-  const _grammar = internal.getLanguage(lang);
+  const _grammar = internal.getLanguage(lang2);
   return new GrammarState(
     _tokenizeWithTheme(code, _grammar, theme, colorMap, options).stateStack,
     _grammar.name,
@@ -10820,7 +10820,7 @@ function normalizeTheme(rawTheme) {
 }
 async function resolveLangs(langs) {
   return Array.from(new Set((await Promise.all(
-    langs.filter((l) => !isSpecialLang(l)).map(async (lang) => await normalizeGetter(lang).then((r) => Array.isArray(r) ? r : [r]))
+    langs.filter((l) => !isSpecialLang(l)).map(async (lang2) => await normalizeGetter(lang2).then((r) => Array.isArray(r) ? r : [r]))
   )).flat()));
 }
 async function resolveThemes(themes) {
@@ -10917,24 +10917,24 @@ var Registry2 = class extends Registry {
     name = resolveLangAlias(name, this._alias);
     return this._resolvedGrammars.get(name);
   }
-  loadLanguage(lang) {
-    if (this.getGrammar(lang.name))
+  loadLanguage(lang2) {
+    if (this.getGrammar(lang2.name))
       return;
     const embeddedLazilyBy = new Set(
-      [...this._langMap.values()].filter((i) => i.embeddedLangsLazy?.includes(lang.name))
+      [...this._langMap.values()].filter((i) => i.embeddedLangsLazy?.includes(lang2.name))
     );
-    this._resolver.addLanguage(lang);
+    this._resolver.addLanguage(lang2);
     const grammarConfig = {
-      balancedBracketSelectors: lang.balancedBracketSelectors || ["*"],
-      unbalancedBracketSelectors: lang.unbalancedBracketSelectors || []
+      balancedBracketSelectors: lang2.balancedBracketSelectors || ["*"],
+      unbalancedBracketSelectors: lang2.unbalancedBracketSelectors || []
     };
-    this._syncRegistry._rawGrammars.set(lang.scopeName, lang);
-    const g = this.loadGrammarWithConfiguration(lang.scopeName, 1, grammarConfig);
-    g.name = lang.name;
-    this._resolvedGrammars.set(lang.name, g);
-    if (lang.aliases) {
-      lang.aliases.forEach((alias) => {
-        this._alias[alias] = lang.name;
+    this._syncRegistry._rawGrammars.set(lang2.scopeName, lang2);
+    const g = this.loadGrammarWithConfiguration(lang2.scopeName, 1, grammarConfig);
+    g.name = lang2.name;
+    this._resolvedGrammars.set(lang2.name, g);
+    if (lang2.aliases) {
+      lang2.aliases.forEach((alias) => {
+        this._alias[alias] = lang2.name;
       });
     }
     this._loadedLanguagesCache = null;
@@ -10957,23 +10957,23 @@ var Registry2 = class extends Registry {
     this._loadedThemesCache = null;
   }
   loadLanguages(langs) {
-    for (const lang of langs)
-      this.resolveEmbeddedLanguages(lang);
+    for (const lang2 of langs)
+      this.resolveEmbeddedLanguages(lang2);
     const langsGraphArray = Array.from(this._langGraph.entries());
-    const missingLangs = langsGraphArray.filter(([_, lang]) => !lang);
+    const missingLangs = langsGraphArray.filter(([_, lang2]) => !lang2);
     if (missingLangs.length) {
-      const dependents = langsGraphArray.filter(([_, lang]) => {
-        if (!lang)
+      const dependents = langsGraphArray.filter(([_, lang2]) => {
+        if (!lang2)
           return false;
-        const embedded = lang.embeddedLanguages || lang.embeddedLangs;
+        const embedded = lang2.embeddedLanguages || lang2.embeddedLangs;
         return embedded?.some((l) => missingLangs.map(([name]) => name).includes(l));
-      }).filter((lang) => !missingLangs.includes(lang));
+      }).filter((lang2) => !missingLangs.includes(lang2));
       throw new ShikiError2(`Missing languages ${missingLangs.map(([name]) => `\`${name}\``).join(", ")}, required by ${dependents.map(([name]) => `\`${name}\``).join(", ")}`);
     }
-    for (const [_, lang] of langsGraphArray)
-      this._resolver.addLanguage(lang);
-    for (const [_, lang] of langsGraphArray)
-      this.loadLanguage(lang);
+    for (const [_, lang2] of langsGraphArray)
+      this._resolver.addLanguage(lang2);
+    for (const [_, lang2] of langsGraphArray)
+      this.loadLanguage(lang2);
   }
   getLoadedLanguages() {
     if (!this._loadedLanguagesCache) {
@@ -10983,10 +10983,10 @@ var Registry2 = class extends Registry {
     }
     return this._loadedLanguagesCache;
   }
-  resolveEmbeddedLanguages(lang) {
-    this._langMap.set(lang.name, lang);
-    this._langGraph.set(lang.name, lang);
-    const embedded = lang.embeddedLanguages ?? lang.embeddedLangs;
+  resolveEmbeddedLanguages(lang2) {
+    this._langMap.set(lang2.name, lang2);
+    this._langGraph.set(lang2.name, lang2);
+    const embedded = lang2.embeddedLanguages ?? lang2.embeddedLangs;
     if (embedded) {
       for (const embeddedLang of embedded)
         this._langGraph.set(embeddedLang, this._langMap.get(embeddedLang));
@@ -11637,7 +11637,7 @@ async function getWdlGrammar() {
 if (!window.sprocketHighlighterPromise) {
   window.sprocketHighlighterPromise = null;
 }
-async function initializeHighlighter() {
+async function initializeHighlighter(languagesToLoad = []) {
   if (window.sprocketHighlighterPromise) {
     console.log("sprocket-code-utils: using cached/ongoing highlighter initialization");
     return await window.sprocketHighlighterPromise;
@@ -11646,7 +11646,6 @@ async function initializeHighlighter() {
   window.sprocketHighlighterPromise = (async () => {
     try {
       const wdlLangDefinition = await getWdlGrammar();
-      const languagesToLoad = [];
       if (wdlLangDefinition) {
         languagesToLoad.push(wdlLangDefinition);
       } else {
@@ -11683,13 +11682,16 @@ var CODE_BLOCK_STYLES = `
     background: var(--shiki-bg, #2e3440) !important;
   }
 `;
-async function initManualHighlighting() {
+async function initManualHighlighting(languagesToLoad = []) {
   try {
-    const highlighter = await initializeHighlighter();
-    for (const codeElem of document.querySelectorAll("pre > code.language-wdl")) {
+    const highlighter = await initializeHighlighter(languagesToLoad);
+    for (const codeElem of document.querySelectorAll('pre > code[class*="language-"]')) {
+      const langClass = [...codeElem.classList].find((c) => c.startsWith("language-"));
+      if (!langClass) continue;
+      const lang2 = langClass.replace("language-", "");
       const code = codeElem.textContent;
       const highlighted = await highlighter.codeToHtml(code, {
-        lang: "wdl",
+        lang: lang2,
         theme: "material-theme-ocean"
       });
       const host = document.createElement("div");
@@ -13005,6 +13007,12 @@ var SprocketTooltip = class extends HTMLElement {
 };
 customElements.define("sprocket-tooltip", SprocketTooltip);
 
+// node_modules/@shikijs/langs/dist/toml.mjs
+var lang = Object.freeze(JSON.parse(`{"displayName":"TOML","fileTypes":["toml"],"name":"toml","patterns":[{"include":"#comments"},{"include":"#groups"},{"include":"#key_pair"},{"include":"#invalid"}],"repository":{"comments":{"begin":"(^[\\\\t ]+)?(?=#)","beginCaptures":{"1":{"name":"punctuation.whitespace.comment.leading.toml"}},"end":"(?!\\\\G)","patterns":[{"begin":"#","beginCaptures":{"0":{"name":"punctuation.definition.comment.toml"}},"end":"\\\\n","name":"comment.line.number-sign.toml"}]},"groups":{"patterns":[{"captures":{"1":{"name":"punctuation.definition.section.begin.toml"},"2":{"patterns":[{"match":"[^.\\\\s]+","name":"entity.name.section.toml"}]},"3":{"name":"punctuation.definition.section.begin.toml"}},"match":"^\\\\s*(\\\\[)([^]\\\\[]*)(])","name":"meta.group.toml"},{"captures":{"1":{"name":"punctuation.definition.section.begin.toml"},"2":{"patterns":[{"match":"[^.\\\\s]+","name":"entity.name.section.toml"}]},"3":{"name":"punctuation.definition.section.begin.toml"}},"match":"^\\\\s*(\\\\[\\\\[)([^]\\\\[]*)(]])","name":"meta.group.double.toml"}]},"invalid":{"match":"\\\\S+(\\\\s*(?=\\\\S))?","name":"invalid.illegal.not-allowed-here.toml"},"key_pair":{"patterns":[{"begin":"([-0-9A-Z_a-z]+)\\\\s*(=)\\\\s*","captures":{"1":{"name":"variable.other.key.toml"},"2":{"name":"punctuation.separator.key-value.toml"}},"end":"(?<=\\\\S)(?<!=)|$","patterns":[{"include":"#primatives"}]},{"begin":"((\\")(.*?)(\\"))\\\\s*(=)\\\\s*","captures":{"1":{"name":"variable.other.key.toml"},"2":{"name":"punctuation.definition.variable.begin.toml"},"3":{"patterns":[{"match":"\\\\\\\\([\\"\\\\\\\\bfnrt]|u\\\\h{4}|U\\\\h{8})","name":"constant.character.escape.toml"},{"match":"\\\\\\\\[^\\"\\\\\\\\bfnrt]","name":"invalid.illegal.escape.toml"},{"match":"\\"","name":"invalid.illegal.not-allowed-here.toml"}]},"4":{"name":"punctuation.definition.variable.end.toml"},"5":{"name":"punctuation.separator.key-value.toml"}},"end":"(?<=\\\\S)(?<!=)|$","patterns":[{"include":"#primatives"}]},{"begin":"((')([^']*)('))\\\\s*(=)\\\\s*","captures":{"1":{"name":"variable.other.key.toml"},"2":{"name":"punctuation.definition.variable.begin.toml"},"4":{"name":"punctuation.definition.variable.end.toml"},"5":{"name":"punctuation.separator.key-value.toml"}},"end":"(?<=\\\\S)(?<!=)|$","patterns":[{"include":"#primatives"}]},{"begin":"(((?:[-0-9A-Z_a-z]+|\\"(?:[^\\"\\\\\\\\]|\\\\\\\\.)*\\"|'[^']*')(?:\\\\s*\\\\.\\\\s*|(?=\\\\s*=))){2,})\\\\s*(=)\\\\s*","captures":{"1":{"name":"variable.other.key.toml","patterns":[{"match":"\\\\.","name":"punctuation.separator.variable.toml"},{"captures":{"1":{"name":"punctuation.definition.variable.begin.toml"},"2":{"patterns":[{"match":"\\\\\\\\([\\"\\\\\\\\bfnrt]|u\\\\h{4}|U\\\\h{8})","name":"constant.character.escape.toml"},{"match":"\\\\\\\\[^\\"\\\\\\\\bfnrt]","name":"invalid.illegal.escape.toml"}]},"3":{"name":"punctuation.definition.variable.end.toml"}},"match":"(\\")((?:[^\\"\\\\\\\\]|\\\\\\\\.)*)(\\")"},{"captures":{"1":{"name":"punctuation.definition.variable.begin.toml"},"2":{"name":"punctuation.definition.variable.end.toml"}},"match":"(')[^']*(')"}]},"3":{"name":"punctuation.separator.key-value.toml"}},"end":"(?<=\\\\S)(?<!=)|$","patterns":[{"include":"#primatives"}]}]},"primatives":{"patterns":[{"begin":"\\\\G\\"\\"\\"","beginCaptures":{"0":{"name":"punctuation.definition.string.begin.toml"}},"end":"\\"{3,5}","endCaptures":{"0":{"name":"punctuation.definition.string.end.toml"}},"name":"string.quoted.triple.double.toml","patterns":[{"match":"\\\\\\\\([\\"\\\\\\\\bfnrt]|u\\\\h{4}|U\\\\h{8})","name":"constant.character.escape.toml"},{"match":"\\\\\\\\[^\\\\n\\"\\\\\\\\bfnrt]","name":"invalid.illegal.escape.toml"}]},{"begin":"\\\\G\\"","beginCaptures":{"0":{"name":"punctuation.definition.string.begin.toml"}},"end":"\\"","endCaptures":{"0":{"name":"punctuation.definition.string.end.toml"}},"name":"string.quoted.double.toml","patterns":[{"match":"\\\\\\\\([\\"\\\\\\\\bfnrt]|u\\\\h{4}|U\\\\h{8})","name":"constant.character.escape.toml"},{"match":"\\\\\\\\[^\\"\\\\\\\\bfnrt]","name":"invalid.illegal.escape.toml"}]},{"begin":"\\\\G'''","beginCaptures":{"0":{"name":"punctuation.definition.string.begin.toml"}},"end":"'{3,5}","endCaptures":{"0":{"name":"punctuation.definition.string.end.toml"}},"name":"string.quoted.triple.single.toml"},{"begin":"\\\\G'","beginCaptures":{"0":{"name":"punctuation.definition.string.begin.toml"}},"end":"'","endCaptures":{"0":{"name":"punctuation.definition.string.end.toml"}},"name":"string.quoted.single.toml"},{"match":"\\\\G[0-9]{4}-(0[1-9]|1[012])-(?!00|3[2-9])[0-3][0-9]([ Tt](?!2[5-9])[012][0-9]:[0-5][0-9]:(?!6[1-9])[0-6][0-9](\\\\.[0-9]+)?(Z|[-+](?!2[5-9])[012][0-9]:[0-5][0-9])?)?","name":"constant.other.date.toml"},{"match":"\\\\G(?!2[5-9])[012][0-9]:[0-5][0-9]:(?!6[1-9])[0-6][0-9](\\\\.[0-9]+)?","name":"constant.other.time.toml"},{"match":"\\\\G(true|false)","name":"constant.language.boolean.toml"},{"match":"\\\\G0x\\\\h(_??\\\\h)*","name":"constant.numeric.hex.toml"},{"match":"\\\\G0o[0-7]([0-7]|_[0-7])*","name":"constant.numeric.octal.toml"},{"match":"\\\\G0b[01]([01]|_[01])*","name":"constant.numeric.binary.toml"},{"match":"\\\\G[-+]?(inf|nan)","name":"constant.numeric.toml"},{"match":"\\\\G([-+]?(0|([1-9](([0-9]|_[0-9])+)?)))(?=[.Ee])(\\\\.([0-9](([0-9]|_[0-9])+)?))?([Ee]([-+]?[0-9](([0-9]|_[0-9])+)?))?","name":"constant.numeric.float.toml"},{"match":"\\\\G([-+]?(0|([1-9](([0-9]|_[0-9])+)?)))","name":"constant.numeric.integer.toml"},{"begin":"\\\\G\\\\[","beginCaptures":{"0":{"name":"punctuation.definition.array.begin.toml"}},"end":"]","endCaptures":{"0":{"name":"punctuation.definition.array.end.toml"}},"name":"meta.array.toml","patterns":[{"begin":"(?=[\\"']|[-+]?[0-9]|[-+]?(inf|nan)|true|false|[\\\\[{])","end":",|(?=])","endCaptures":{"0":{"name":"punctuation.separator.array.toml"}},"patterns":[{"include":"#primatives"},{"include":"#comments"},{"include":"#invalid"}]},{"include":"#comments"},{"include":"#invalid"}]},{"begin":"\\\\G\\\\{","beginCaptures":{"0":{"name":"punctuation.definition.inline-table.begin.toml"}},"end":"}","endCaptures":{"0":{"name":"punctuation.definition.inline-table.end.toml"}},"name":"meta.inline-table.toml","patterns":[{"begin":"(?=\\\\S)","end":",|(?=})","endCaptures":{"0":{"name":"punctuation.separator.inline-table.toml"}},"patterns":[{"include":"#key_pair"}]},{"include":"#comments"}]}]}},"scopeName":"source.toml"}`));
+var toml_default = [
+  lang
+];
+
 // static/index.js
 module_default.plugin(module_default2);
 var urlParams = new URLSearchParams(window.location.search);
@@ -13058,4 +13066,4 @@ module_default.data("App", () => ({
   }
 }));
 module_default.start();
-await initManualHighlighting();
+await initManualHighlighting([toml_default]);
