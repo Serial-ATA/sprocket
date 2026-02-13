@@ -7,12 +7,19 @@
 
 #[path = "ui/base/mod.rs"]
 mod base;
+#[path = "ui/custom_logo/mod.rs"]
+mod custom_logo;
 
 use std::collections::HashMap;
 use std::ffi::OsStr;
+use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
 use std::net::SocketAddr;
 use std::path::Path;
 use std::path::PathBuf;
+use std::process::Command;
+use std::process::Stdio;
 use std::sync::Arc;
 use std::sync::LazyLock;
 use std::time::Duration;
@@ -40,9 +47,6 @@ use thirtyfour::support::block_on;
 use tokio::sync::Mutex;
 use tokio::sync::OnceCell;
 use tokio::task::JoinSet;
-use wdl_analysis::Config as AnalysisConfig;
-use wdl_doc::Config;
-use wdl_doc::document_workspace;
 
 /// Extension trait for [`WebDriver`]s.
 pub trait WebDriverExt {
@@ -89,7 +93,7 @@ pub trait UiTest: Send + Sync {
     /// Execute the UI test.
     ///
     /// By default, the `driver` will be navigated to the workspace index page.
-    async fn run(&self, driver: &mut WebDriver) -> anyhow::Result<()>;
+    async fn run(&self, driver: &mut WebDriver, docs_path: &Path) -> anyhow::Result<()>;
 }
 
 /// Map of test name -> test implementation
@@ -98,27 +102,73 @@ pub type TestMap = HashMap<&'static str, Arc<dyn UiTest>>;
 /// Map of test category -> TestMap
 static TEST_CATEGORIES: LazyLock<HashMap<&'static str, TestMap>> = LazyLock::new(|| {
     let mut categories = HashMap::new();
-    categories.extend([("base", base::all_tests())]);
+    categories.extend([
+        ("base", base::all_tests()),
+        ("custom_logo", custom_logo::all_tests()),
+    ]);
     categories
 });
 
-/// Important directories within a test category.
-struct TestCategoryDirs {
-    /// The directory containing the generated documentation.
+/// Directories specific to a single test instance.
+struct TestPaths {
+    /// The directory containing the generated documentation for this specific
+    /// test.
     docs: PathBuf,
     /// The directory containing the assets used by `wdl-doc`.
     assets: PathBuf,
+    /// The base directory for the test category in the source tree.
+    category_root: PathBuf,
 }
 
-impl TestCategoryDirs {
-    /// Get the directories for the given test category.
-    fn for_category(tmp: &Path, category: &str) -> Self {
-        let project_base = Path::new("tests").join("ui").join(category);
-        let base = tmp.join(category);
+impl TestPaths {
+    /// Get paths for a specific test instance.
+    fn new(tmp: &Path, category: &str, test_name: &str) -> Self {
+        let category_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests")
+            .join("ui")
+            .join(category);
+        let docs = tmp.join(category).join(test_name).join("docs");
+
         Self {
-            docs: base.join("docs"),
-            assets: project_base.join("assets"),
+            docs,
+            assets: category_root.join("assets"),
+            category_root,
         }
+    }
+}
+
+/// Metadata derived from the test file.
+#[derive(Default)]
+struct TestMetadata {
+    /// Arguments to pass to `wdl-doc` for this file.
+    wdl_doc_args: Vec<String>,
+}
+
+impl TestMetadata {
+    /// Parse the metadata comments at the top of the file.
+    fn load(path: &Path) -> anyhow::Result<Self> {
+        const METADATA_MARKER: &str = "//@";
+
+        let mut metadata = Self::default();
+        for line in BufReader::new(File::open(path)?).lines() {
+            let line = line?;
+            let Some(meta) = line.strip_prefix(METADATA_MARKER) else {
+                break;
+            };
+
+            let Some((field, value)) = meta.split_once(':') else {
+                bail!("Malformed meta line in '{}': {line}", path.display());
+            };
+
+            match field {
+                "args" => {
+                    metadata.wdl_doc_args = value.split(' ').map(ToString::to_string).collect()
+                }
+                _ => bail!("Unexpected meta line in '{}': {line}", path.display()),
+            }
+        }
+
+        Ok(metadata)
     }
 }
 
@@ -140,7 +190,7 @@ async fn find_tests(tmp_dir: PathBuf) -> anyhow::Result<Vec<Trial>> {
             .unwrap()
             .into_owned();
 
-        let Some(category) = TEST_CATEGORIES.get(&*category_name) else {
+        let Some(category_map) = TEST_CATEGORIES.get(&*category_name) else {
             bail!(
                 "no category found for directory '{}'. Was it added to `all_tests()`?",
                 category_path.display()
@@ -165,18 +215,20 @@ async fn find_tests(tmp_dir: PathBuf) -> anyhow::Result<Vec<Trial>> {
                 continue;
             }
 
-            let Some(test) = category.get(&*test_name).cloned() else {
+            let Some(test) = category_map.get(&*test_name).cloned() else {
                 bail!(
                     "no test found for file {}. Was it added to `all_tests()`?",
                     test_path.display()
                 );
             };
 
-            let category_name = category_name.clone();
+            let server_key = format!("{category_name}::{test_name}");
+
             let tmp_dir = tmp_dir.clone();
-            trials.push(Trial::test(test_name, move || {
+            let category_name = category_name.clone();
+            trials.push(Trial::test(test_name.clone(), move || {
                 let task = async move {
-                    let ctx = match global_state(tmp_dir).await {
+                    let ctx = match global_state(tmp_dir.clone()).await {
                         GlobalState::Ready(ctx) => ctx,
                         GlobalState::Failed(e, _) => {
                             return Err(anyhow!("failed to get global state: {e}").into());
@@ -185,21 +237,23 @@ async fn find_tests(tmp_dir: PathBuf) -> anyhow::Result<Vec<Trial>> {
 
                     let server_addr = ctx
                         .server_addresses
-                        .get(&*category_name)
-                        .expect("should exist");
-                    let category_url = format!("http://{server_addr}");
+                        .get(&server_key)
+                        .expect("server should exist for test");
+
+                    let test_url = format!("http://{server_addr}");
 
                     let mut driver = ctx.driver.lock().await;
                     let tab = driver.new_tab().await?;
 
-                    let do_test = async |driver: &mut WebDriver, tab, category_url| {
+                    let do_test = async |driver: &mut WebDriver, tab, url, docs_dir| {
                         driver.switch_to_window(tab).await?;
-                        driver.goto(&category_url).await?;
-                        test.run(driver).await?;
+                        driver.goto(&url).await?;
+                        test.run(driver, docs_dir).await?;
                         Ok(())
                     };
 
-                    let result = do_test(&mut driver, tab, category_url).await;
+                    let docs_dir = TestPaths::new(&tmp_dir, &category_name, &test_name).docs;
+                    let result = do_test(&mut driver, tab, test_url, &docs_dir).await;
 
                     // Cleanup
                     driver.close_window().await?;
@@ -216,16 +270,28 @@ async fn find_tests(tmp_dir: PathBuf) -> anyhow::Result<Vec<Trial>> {
     Ok(trials)
 }
 
-/// Generates the documentation for the workspace under
-/// `<tmp_dir>/<category>/assets`.
-async fn generate_docs(tmp_dir: &Path, category: &str) -> anyhow::Result<()> {
-    let paths = TestCategoryDirs::for_category(tmp_dir, category);
-    let config = Config::new(AnalysisConfig::default(), &paths.assets, &paths.docs);
+/// Generates the documentation for a specific test instance.
+async fn generate_docs(paths: &TestPaths, args: &[String]) -> anyhow::Result<()> {
+    tracing::info!("Generating docs at '{}'", paths.docs.display());
+    if paths.docs.exists() {
+        std::fs::remove_dir_all(&paths.docs)?;
+    }
 
-    tracing::info!("Generating docs for workspace '{}'", paths.assets.display());
-    if let Err(e) = document_workspace(config).await {
-        let _ = std::fs::remove_dir_all(&paths.docs);
-        bail!("failed to generate docs for {category}: {e}");
+    let mut cmd = Command::new("cargo");
+    cmd.args(["run", "-p", "wdl-doc-bin", "--bin", "wdl-doc", "--"])
+        .args(args)
+        .arg("--output")
+        .arg(&paths.docs)
+        .arg(&paths.assets)
+        .current_dir(&paths.category_root);
+
+    let status = cmd
+        .stderr(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .status()
+        .context("failed to execute wdl-doc")?;
+    if !status.success() {
+        bail!("failed to generate docs");
     }
 
     Ok(())
@@ -239,34 +305,81 @@ fn router(docs_path: &Path) -> Router {
 }
 
 /// Map of `test category` -> server address.
-type ServerAddressMap = HashMap<&'static str, SocketAddr>;
+type ServerAddressMap = HashMap<String, SocketAddr>;
 
-/// Setup a web server for each test category.
+/// Setup a web server for each test file.
 async fn setup_web_servers(tmp_dir: PathBuf) -> anyhow::Result<ServerAddressMap> {
     let addresses = Arc::new(Mutex::new(HashMap::new()));
-
     let mut set = JoinSet::new();
 
-    for category in TEST_CATEGORIES.keys().copied() {
-        let paths = TestCategoryDirs::for_category(&tmp_dir, category);
-        let addresses = addresses.clone();
+    let ui_tests_dir = Path::new("tests").join("ui");
+    for entry in ui_tests_dir.read_dir()? {
+        let entry = entry?;
+        let category_path = entry.path();
+        if !category_path.is_dir() {
+            continue;
+        }
 
-        let tmp = tmp_dir.clone();
-        set.spawn(async move {
-            generate_docs(&tmp, category).await?;
-            let listener = tokio::net::TcpListener::bind("localhost:0").await?;
-            let addr = listener.local_addr()?;
+        let category_name = category_path
+            .file_stem()
+            .unwrap()
+            .to_string_lossy()
+            .into_owned();
 
-            tracing::info!("Listening on '{addr}' for category '{category}'");
+        if !TEST_CATEGORIES.contains_key(&*category_name) {
+            continue;
+        }
 
-            addresses.lock().await.insert(category, addr);
+        for test_entry in category_path.read_dir()? {
+            let test_entry = test_entry?;
+            let test_path = test_entry.path();
 
-            tokio::spawn(async move {
-                let _ = axum::serve(listener, router(&paths.docs)).await;
+            if test_path.extension().and_then(|s| s.to_str()) != Some("rs") {
+                continue;
+            }
+
+            let test_name = test_path
+                .file_stem()
+                .unwrap()
+                .to_string_lossy()
+                .into_owned();
+            if test_name == "mod" {
+                continue;
+            }
+
+            let metadata = match TestMetadata::load(&test_path) {
+                Ok(m) => m,
+                Err(e) => {
+                    tracing::error!("Failed to parse metadata for {}: {e}", test_path.display());
+                    continue;
+                }
+            };
+
+            let addresses = addresses.clone();
+            let tmp = tmp_dir.clone();
+            let category_name = category_name.clone();
+            let test_name = test_name.clone();
+
+            set.spawn(async move {
+                let paths = TestPaths::new(&tmp, &category_name, &test_name);
+
+                generate_docs(&paths, &metadata.wdl_doc_args).await?;
+
+                let listener = tokio::net::TcpListener::bind("localhost:0").await?;
+                let addr = listener.local_addr()?;
+                let key = format!("{}::{}", category_name, test_name);
+
+                tracing::info!("Listening on '{addr}' for test '{key}'");
+
+                addresses.lock().await.insert(key, addr);
+
+                tokio::spawn(async move {
+                    let _ = axum::serve(listener, router(&paths.docs)).await;
+                });
+
+                Ok(())
             });
-
-            Ok(())
-        });
+        }
     }
 
     let wait_for_setup = async {
@@ -274,7 +387,7 @@ async fn setup_web_servers(tmp_dir: PathBuf) -> anyhow::Result<ServerAddressMap>
         results.into_iter().collect::<anyhow::Result<_>>()
     };
 
-    match tokio::time::timeout(Duration::from_secs(10), wait_for_setup).await? {
+    match tokio::time::timeout(Duration::from_secs(30), wait_for_setup).await? {
         Ok(()) => Ok(Arc::try_unwrap(addresses)
             .expect("should be exclusive")
             .into_inner()),
