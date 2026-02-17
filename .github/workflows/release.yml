@@ -108,24 +108,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # == Windows ==
-          - rust-target: x86_64-pc-windows-msvc
-            os: windows-latest
-            archive-extension: zip
-            binary-extension: ".exe"
-          - rust-target: aarch64-pc-windows-msvc
-            os: windows-latest
-            archive-extension: zip
-            binary-extension: ".exe"
-          # == macOS ==
-          - rust-target: x86_64-apple-darwin
-            os: macos-latest
-            archive-extension: tar.gz
-            binary-extension: ""
-          - rust-target: aarch64-apple-darwin
-            os: macos-latest
-            archive-extension: tar.gz
-            binary-extension: ""
+# TODO: uncomment these before merge
+#          # == Windows ==
+#          - rust-target: x86_64-pc-windows-msvc
+#            os: windows-latest
+#            archive-extension: zip
+#            binary-extension: ".exe"
+#          - rust-target: aarch64-pc-windows-msvc
+#            os: windows-latest
+#            archive-extension: zip
+#            binary-extension: ".exe"
+#          # == macOS ==
+#          - rust-target: x86_64-apple-darwin
+#            os: macos-latest
+#            archive-extension: tar.gz
+#            binary-extension: ""
+#          - rust-target: aarch64-apple-darwin
+#            os: macos-latest
+#            archive-extension: tar.gz
+#            binary-extension: ""
           # == Linux ==
           - rust-target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
@@ -225,6 +226,7 @@ jobs:
       - name: Concatenate Manifest
         run: |
           cat fragments/*.toml > manifest.toml
+          cat sprocketup/profiles.toml >> manifest.toml
           
           echo "Generated manifest.toml:"
           cat manifest.toml
