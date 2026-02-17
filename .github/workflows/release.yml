@@ -101,6 +101,9 @@ jobs:
   build_artifacts:
     name: Build ${{ matrix.rust-target }} artifacts
     runs-on: ${{ matrix.os }}
+    env:
+      # Space-separated list of packages to release (package:binary)
+      BUILD_CONFIG: "sprocket:sprocket wdl-doc-bin:wdl-doc"
     strategy:
       fail-fast: false
       matrix:
@@ -155,21 +158,78 @@ jobs:
           if [ "$RUNNER_OS" != "Windows" ]; then
               export PKG_CONFIG_SYSROOT_DIR=/
           fi
-          cargo --locked build -p sprocket --bin sprocket -p wdl-doc-bin --bin wdl-doc --release --target ${{ matrix.rust-target }}
 
-      - name: Compress artifacts
-        if: runner.os == 'Windows'
-        working-directory: ./target/${{ matrix.rust-target }}/release
-        run: 7z a sprocket-${{ github.ref_name }}-${{ matrix.rust-target }}.zip sprocket.exe
+          CARGO_ARGS=""
+          for ITEM in $BUILD_CONFIG; do
+            PKG="${ITEM%%:*}"
+            BIN="${ITEM##*:}"
+            CARGO_ARGS="$CARGO_ARGS -p $PKG --bin $BIN"
+          done
+          cargo --locked build $CARGO_ARGS --release --target ${{ matrix.rust-target }}
 
-      - name: Compress artifacts
-        if: runner.os != 'Windows'
-        working-directory: ./target/${{ matrix.rust-target }}/release
-        run: tar -czvf sprocket-${{ github.ref_name }}-${{ matrix.rust-target }}.tar.gz sprocket
+      - name: Package artifacts
+        shell: bash
+        working-directory: "target/${{ matrix.rust-target }}/release"
+        run: |
+          FRAGMENT_PATH="../../../${{ matrix.rust-target }}.toml"
+          touch "$FRAGMENT_PATH"
+          
+          for ITEM in $BUILD_CONFIG; do
+            BIN="${ITEM##*:}"
+            BINARY_FILENAME="${BIN}${{ matrix.binary-extension }}"
+            ARCHIVE_FILENAME="${BIN}-${{ matrix.rust-target }}.${{ matrix.archive-extension }}"
 
-      - name: Update the GH release with the new artifact
+            if [ ! -f "$BINARY_FILENAME" ]; then
+              echo "Binary $BINARY_FILENAME not found"
+              exit 1
+            fi
+
+            if [ "$RUNNER_OS" == "Windows" ]; then
+              7z a "$ARCHIVE_FILENAME" "$BINARY_FILENAME" > /dev/null
+            else
+              tar -czvf "$ARCHIVE_FILENAME" "$BINARY_FILENAME"
+            fi
+
+            HASH=$(sha256sum "$ARCHIVE_FILENAME" | awk '{print $1}')
+
+            cat <<EOF >> "$FRAGMENT_PATH"
+            [component.${BIN}.${{ matrix.rust-target }}]
+            src = "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/${ARCHIVE_FILENAME}"
+            hash = "${HASH}"
+            
+            EOF
+          done
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ./target/${{ matrix.rust-target }}/release/sprocket-${{ github.ref_name }}-${{ matrix.rust-target }}.${{ matrix.archive-extension }}
-            ./target/${{ matrix.rust-target }}/release/sprocketup-${{ matrix.rust-target }}${{ matrix.binary-extension }}
+          files: ./target/${{ matrix.rust-target }}/release/*.${{ matrix.archive-extension }}
+
+      - name: Upload Manifest Fragment
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-fragment-${{ matrix.rust-target }}
+          path: ${{ matrix.rust-target }}.toml
+  generate_manifest:
+    name: Generate Manifest
+    needs: build_artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download manifest fragments
+        uses: actions/download-artifact@v4
+        with:
+          pattern: manifest-fragment-*
+          merge-multiple: true
+          path: fragments
+
+      - name: Concatenate Manifest
+        run: |
+          cat fragments/*.toml > manifest.toml
+          
+          echo "Generated manifest.toml:"
+          cat manifest.toml
+
+      - name: Upload Manifest to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: manifest.toml
+
