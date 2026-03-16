@@ -467,16 +467,9 @@ impl<'a> State<'a> {
 
         // Add inputs to the backend
         let mut urls = Vec::new();
-        value.visit_paths(&mut |is_file, path| {
+        value.visit_paths(&mut |content_kind, path| {
             // Insert a backend input for the path
-            if let Some(index) = self.insert_backend_input(
-                if is_file {
-                    ContentKind::File
-                } else {
-                    ContentKind::Directory
-                },
-                path,
-            )? {
+            if let Some(index) = self.insert_backend_input(content_kind, path)? {
                 // Check to see if there's no guest path for a remote URL that needs to be
                 // localized; if so, we must localize it now
                 if needs_local_inputs

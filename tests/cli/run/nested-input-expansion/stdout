@@ -1,0 +1,6 @@
+{
+  "outer.duplicated": "./out/runs/outer/_TIMESTAMP_/calls/inner/attempts/0/work/out.txt",
+  "outer.truncated": "./out/runs/outer/_TIMESTAMP_/calls/truncate_and_copy/calls/truncate/attempts/0/work/out.txt",
+  "outer.copied": "./out/runs/outer/_TIMESTAMP_/calls/truncate_and_copy/calls/copy_wf/calls/copy/attempts/0/work/out.txt"
+}
+outputs were also written to `./out/runs/outer/_TIMESTAMP_/outputs.json`

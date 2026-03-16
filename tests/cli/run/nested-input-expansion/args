@@ -1,0 +1,1 @@
+run source.wdl foo=hello inner.bar=$__CARGO_MANIFEST_DIR/LICENSE-MIT truncate_and_copy.truncate.to_truncate=$__CARGO_MANIFEST_DIR/LICENSE-APACHE truncate_and_copy.copy_wf.copy.to_copy=$__CARGO_MANIFEST_DIR/.gitignore -t outer

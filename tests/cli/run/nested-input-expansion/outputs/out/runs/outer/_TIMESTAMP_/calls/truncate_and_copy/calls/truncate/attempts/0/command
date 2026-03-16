@@ -1,0 +1,1 @@
+head -c 50 /mnt/task/inputs/6/LICENSE-APACHE > out.txt

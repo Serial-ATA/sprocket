@@ -119,11 +119,12 @@ struct CommandOutput {
 
 /// Runs a test given the test root directory.
 fn run_test(test_path: &Path) -> Result<()> {
-    let working_test_directory = setup_working_test_directory(test_path)
+    let test_path = std::path::absolute(test_path)?;
+    let working_test_directory = setup_working_test_directory(&test_path)
         .context("failed to setup working test directory")?;
-    let command_output = run_sprocket(test_path, working_test_directory.path())
+    let command_output = run_sprocket(&test_path, working_test_directory.path())
         .context("failed to run sprocket command")?;
-    compare_test_results(test_path, working_test_directory.path(), &command_output)
+    compare_test_results(&test_path, working_test_directory.path(), command_output)
 }
 
 /// Sets up the working test directory by copying initial files.
@@ -206,6 +207,8 @@ fn run_sprocket(test_path: &Path, working_test_directory: &Path) -> Result<Comma
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .env("RUST_LOG", "none")
+        // Used by the nested-input-expansion test
+        .env("__CARGO_MANIFEST_DIR", env!("CARGO_MANIFEST_DIR"))
         .env_remove("RUST_BACKTRACE")
         .spawn()
         .context("failed to spawn command")?
@@ -257,16 +260,20 @@ fn resolve_env_config(test_path: &Path) -> Result<Option<NamedTempFile>> {
 }
 
 /// Normalizes a string for OS platform differences and dynamic content.
-fn normalize_string(input: &str) -> String {
+fn normalize_string(input: &str, temp_dir: Option<&Path>) -> String {
     // NOTE: the drive prefix removal (e.g., `C:`) must occur after backslash
     // normalization so that paths like `C:\foo` are first converted to `C:/foo`
     // before the prefix is stripped.
-    let s = input
+    let mut s = input
         .replace("\r\n", "\n")
         .replace("\\r\\n", "\\n")
         .replace("sprocket.exe", "sprocket")
         .replace("\\", "/")
         .replace("//", "/");
+
+    if let Some(temp_dir) = temp_dir {
+        s = s.replace(&*temp_dir.to_string_lossy(), ".");
+    }
 
     // Strip Windows drive prefixes (e.g., `C:`) from absolute paths.
     static DRIVE_PREFIX: std::sync::LazyLock<regex::Regex> =
@@ -302,35 +309,38 @@ fn is_symlink(base_path: &Path, relative_path: &Path) -> bool {
     full_path.symlink_metadata().is_ok_and(|m| m.is_symlink())
 }
 
+/// This function:
+///
+/// 1. Replaces timestamps printed to stdout with `_TIMESTAMP_`
+/// 2. Replaces temp directory paths (e.g. `/tmp/.tmpL9xpAn/...`) with `./...`
+fn normalize_stdout(
+    expected_stdout_file: &Path,
+    content: &mut String,
+    temp_dir: &Path,
+) -> Result<()> {
+    // Update timestamp-specific paths printed to stdout
+    if !expected_stdout_file.starts_with(&*CLI_RUN_TEST_DIR) {
+        return Ok(());
+    }
+
+    *content = TIMESTAMP_PATTERN
+        .replace_all(content, "_TIMESTAMP_")
+        .replace(&*temp_dir.to_string_lossy(), ".");
+
+    Ok(())
+}
+
 /// Normalizes the expected outputs directory for stable comparison.
 ///
 /// This function:
 ///
-/// 1. Replaces timestamps printed to stdout with `_TIMESTAMP_`
-/// 2. Removes transient files (e.g., SQLite `-shm`, `-wal` files)
-/// 3. Zeroes out binary files so they exist but have no content to compare
-/// 4. Updates symlink targets to replace timestamps with `_TIMESTAMP_`
-/// 5. Renames timestamp directories to `_TIMESTAMP_`
-fn normalize_expected_outputs(path: &Path, expected_stdout_file: &Path) -> Result<()> {
+/// 1. Removes transient files (e.g., SQLite `-shm`, `-wal` files)
+/// 2. Zeroes out binary files so they exist but have no content to compare
+/// 3. Updates symlink targets to replace timestamps with `_TIMESTAMP_`
+/// 4. Renames timestamp directories to `_TIMESTAMP_`
+fn normalize_expected_outputs(path: &Path, temp_dir: &Path) -> Result<()> {
     if !path.exists() {
         return Ok(());
-    }
-
-    // Update timestamp-specific paths printed to stdout
-    if expected_stdout_file.starts_with(&*CLI_RUN_TEST_DIR) {
-        let content = fs::read_to_string(expected_stdout_file)?;
-
-        let mut normalized = String::new();
-        for line in content.lines() {
-            if line.starts_with("outputs were also written to") {
-                normalized.push_str(&TIMESTAMP_PATTERN.replace(line, "_TIMESTAMP_"));
-            } else {
-                normalized.push_str(line);
-            }
-            normalized.push('\n');
-        }
-
-        fs::write(expected_stdout_file, normalized.as_bytes())?;
     }
 
     // Remove transient files and zero out binary files
@@ -344,9 +354,20 @@ fn normalize_expected_outputs(path: &Path, expected_stdout_file: &Path) -> Resul
                 .any(|suffix| name.ends_with(suffix))
             {
                 fs::remove_file(entry.path())?;
-            } else if is_binary_file(entry.path()) {
-                fs::write(entry.path(), b"")?;
+                continue;
             }
+
+            if is_binary_file(entry.path()) {
+                fs::write(entry.path(), b"")?;
+                continue;
+            }
+
+            let mut content = fs::read_to_string(entry.path())?;
+            if path.starts_with(&*CLI_RUN_TEST_DIR) {
+                content = normalize_string(content.as_str(), Some(temp_dir));
+            }
+
+            fs::write(entry.path(), content)?;
         }
     }
 
@@ -401,12 +422,18 @@ fn normalize_expected_outputs(path: &Path, expected_stdout_file: &Path) -> Resul
 }
 
 /// Compares the contents in the expected file with the actual test results.
-fn compare_results(expected_path: &Path, actual: &str) -> Result<()> {
+fn compare_results(expected_path: &Path, actual: &str, temp_dir: &Path) -> Result<()> {
     let expected = fs::read_to_string(expected_path)
         .with_context(|| format!("failed to read result file {expected_path:?}"))?;
 
-    let expected = normalize_string(&expected);
-    let actual = normalize_string(actual);
+    let expected = normalize_string(&expected, None);
+
+    let actual = if expected_path.starts_with(&*CLI_RUN_TEST_DIR) {
+        normalize_string(actual, Some(temp_dir))
+    } else {
+        normalize_string(actual, None)
+    };
+
     if expected != actual {
         eprintln!("expected:{expected:?}");
         eprintln!("actual:{actual:?}");
@@ -421,10 +448,10 @@ fn compare_results(expected_path: &Path, actual: &str) -> Result<()> {
 }
 
 /// Compares the contents of two text files.
-fn compare_files(expected_path: &Path, actual_path: &Path) -> Result<()> {
+fn compare_files(expected_path: &Path, actual_path: &Path, temp_dir: &Path) -> Result<()> {
     let actual = fs::read_to_string(actual_path)
         .with_context(|| format!("failed to read actual file {actual_path:?}"))?;
-    compare_results(expected_path, &actual)
+    compare_results(expected_path, &actual, temp_dir)
 }
 
 /// Builds a list of entry paths in a directory relative to the directory's
@@ -513,7 +540,7 @@ __UNEXPECTED_FILES_FOUND__
             let expected_full_path = expected_path.join(expected_original);
             let actual_original = actual_map.get(normalized).expect("path should exist");
             let actual_full_path = actual_path.join(actual_original);
-            compare_files(&expected_full_path, &actual_full_path).err()
+            compare_files(&expected_full_path, &actual_full_path, actual_path).err()
         })
         .collect::<Vec<_>>();
 
@@ -548,13 +575,19 @@ fn has_output_files(test_path: &Path, working_test_directory: &Path) -> Result<b
 fn compare_test_results(
     test_path: &Path,
     working_test_directory: &Path,
-    command_output: &CommandOutput,
+    mut command_output: CommandOutput,
 ) -> Result<()> {
     let expected_output_dir = test_path.join("outputs");
     let expected_stderr_file = test_path.join("stderr");
-    let expected_stdout_file = std::path::absolute(test_path.join("stdout"))?;
+    let expected_stdout_file = test_path.join("stdout");
     let expected_exit_code_file = test_path.join("exit_code");
     let expects_outputs = expected_output_dir.is_dir();
+
+    normalize_stdout(
+        &expected_stdout_file,
+        &mut command_output.stdout,
+        working_test_directory,
+    )?;
 
     if env::var_os("BLESS").is_some() {
         fs::write(&expected_stderr_file, &command_output.stderr)
@@ -574,12 +607,20 @@ fn compare_test_results(
             recursive_copy(working_test_directory, &expected_output_dir).context(
                 "failed to copy output files from test results to setup new expected outputs",
             )?;
-            normalize_expected_outputs(&expected_output_dir, &expected_stdout_file)
+            normalize_expected_outputs(&expected_output_dir, working_test_directory)
                 .context("failed to normalize expected outputs")?;
         }
     }
-    compare_results(&expected_stderr_file, &command_output.stderr)?;
-    compare_results(&expected_stdout_file, &command_output.stdout)?;
+    compare_results(
+        &expected_stderr_file,
+        &command_output.stderr,
+        working_test_directory,
+    )?;
+    compare_results(
+        &expected_stdout_file,
+        &command_output.stdout,
+        working_test_directory,
+    )?;
 
     if expects_outputs {
         recursive_compare(&expected_output_dir, working_test_directory)?;
@@ -588,6 +629,7 @@ fn compare_test_results(
     compare_results(
         &expected_exit_code_file,
         &command_output.exit_code.to_string(),
+        working_test_directory,
     )?;
     Ok(())
 }

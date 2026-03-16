@@ -691,7 +691,7 @@ async fn execute_workflow_target(
         .workflow()
         .context("document does not contain a workflow")?;
     inputs
-        .join_paths(workflow, |_| Ok(base_dir))
+        .join_paths(document, workflow, &|_| Ok(base_dir))
         .await
         .context("failed to resolve input paths")?;
 
@@ -751,7 +751,7 @@ async fn execute_task_target(
 
     // Resolve relative paths in inputs from `base_dir`
     inputs
-        .join_paths(task, |_| Ok(base_dir))
+        .join_paths(task, &|_| Ok(base_dir))
         .await
         .context("failed to resolve input paths")?;
 

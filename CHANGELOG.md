@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+* Nested inputs are now shell-expanded in `run` ([#]()).
+
 ## 0.22.0 - 2026-03-12
 
 ### Added

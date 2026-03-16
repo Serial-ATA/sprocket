@@ -1,0 +1,4 @@
+{
+  "truncated": "./out/runs/outer/_TIMESTAMP_/calls/truncate_and_copy/calls/truncate/attempts/0/work/out.txt",
+  "copied": "./out/runs/outer/_TIMESTAMP_/calls/truncate_and_copy/calls/copy_wf/calls/copy/attempts/0/work/out.txt"
+}

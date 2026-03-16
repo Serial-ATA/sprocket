@@ -234,7 +234,12 @@ impl Invocation {
             ))
         }
 
-        // Resolve relative paths using per-input origins
+        let resolver = |key: &str| {
+            origins
+                .get(key)
+                .ok_or_else(|| anyhow!("no origin path for input `{key}`"))
+        };
+
         match &mut inputs {
             EngineInputs::Task(task_inputs) => {
                 let task = document
@@ -242,12 +247,7 @@ impl Invocation {
                     .with_context(|| format!("task `{target}` was not found"))?;
 
                 task_inputs
-                    .join_paths(task, |key| {
-                        let key = format!("{target}.{key}");
-                        origins
-                            .get(&key)
-                            .ok_or_else(|| anyhow!("no origin path for input `{key}`"))
-                    })
+                    .join_paths(task, &resolver)
                     .await
                     .context("failed to resolve input paths")?;
             }
@@ -259,12 +259,7 @@ impl Invocation {
                 }
 
                 workflow_inputs
-                    .join_paths(workflow, |key| {
-                        let key = format!("{target}.{key}");
-                        origins
-                            .get(&key)
-                            .ok_or_else(|| anyhow!("no origin path for input `{key}`"))
-                    })
+                    .join_paths(document, workflow, &resolver)
                     .await
                     .context("failed to resolve input paths")?;
             }

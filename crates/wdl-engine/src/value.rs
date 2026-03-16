@@ -60,6 +60,7 @@ use wdl_ast::v1::TASK_FIELD_PREVIOUS;
 use wdl_ast::v1::TASK_FIELD_RETURN_CODE;
 use wdl_ast::version::V1;
 
+use crate::ContentKind;
 use crate::EvaluationContext;
 use crate::EvaluationPath;
 use crate::Outputs;
@@ -649,11 +650,11 @@ impl Value {
     /// by this value.
     pub(crate) fn visit_paths<F>(&self, cb: &mut F) -> Result<()>
     where
-        F: FnMut(bool, &HostPath) -> Result<()> + Send + Sync,
+        F: FnMut(ContentKind, &HostPath) -> Result<()> + Send + Sync,
     {
         match self {
-            Self::Primitive(PrimitiveValue::File(path)) => cb(true, path),
-            Self::Primitive(PrimitiveValue::Directory(path)) => cb(false, path),
+            Self::Primitive(PrimitiveValue::File(path)) => cb(ContentKind::File, path),
+            Self::Primitive(PrimitiveValue::Directory(path)) => cb(ContentKind::Directory, path),
             Self::Compound(v) => v.visit_paths(cb),
             _ => Ok(()),
         }
@@ -2482,7 +2483,7 @@ impl CompoundValue {
     /// by this value.
     fn visit_paths<F>(&self, cb: &mut F) -> Result<()>
     where
-        F: FnMut(bool, &HostPath) -> Result<()> + Send + Sync,
+        F: FnMut(ContentKind, &HostPath) -> Result<()> + Send + Sync,
     {
         match self {
             Self::Pair(pair) => {
@@ -2497,8 +2498,8 @@ impl CompoundValue {
             Self::Map(map) => {
                 for (k, v) in map.iter() {
                     match k {
-                        PrimitiveValue::File(path) => cb(true, path)?,
-                        PrimitiveValue::Directory(path) => cb(false, path)?,
+                        PrimitiveValue::File(path) => cb(ContentKind::File, path)?,
+                        PrimitiveValue::Directory(path) => cb(ContentKind::Directory, path)?,
                         _ => {}
                     }
 

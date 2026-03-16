@@ -88,7 +88,7 @@ impl<'a> Evaluator<'a> {
 
         // Ensure all the paths specified in the inputs are relative to
         // their respective origin paths.
-        inputs.join_paths(task, |_| Ok(self.base_dir)).await?;
+        inputs.join_paths(task, &|_| Ok(self.base_dir)).await?;
 
         let evaluator =
             WdlEvaluator::new(self.output_dir, self.config, cancellation, events).await?;
@@ -123,7 +123,9 @@ impl<'a> Evaluator<'a> {
 
                 // Ensure all the paths specified in the inputs are relative to
                 // their respective origin paths.
-                inputs.join_paths(workflow, |_| Ok(self.base_dir)).await?;
+                inputs
+                    .join_paths(self.document, workflow, &|_| Ok(self.base_dir))
+                    .await?;
 
                 let evaluator =
                     WdlEvaluator::new(self.output_dir, self.config, cancellation, events).await?;
