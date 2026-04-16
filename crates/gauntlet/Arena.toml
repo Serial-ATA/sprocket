@@ -8,6 +8,11 @@ commit_hash = "60c4e506136dbebc687c3db7b1e8d3a745f488c8"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-annotsv/testrun.wdl"
+message = "testrun.wdl:100:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annotsv/testrun.wdl/#L100"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-annotsv/testrun.wdl"
 message = "testrun.wdl:57:5: note[ShellCheck]: Consider using { cmd1; cmd2; } >> file instead of individual redirects."
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annotsv/testrun.wdl/#L57"
 
@@ -30,6 +35,11 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-annotsv/testrun.wdl"
 message = "testrun.wdl:98:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annotsv/testrun.wdl/#L98"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-annotsv/testrun.wdl"
+message = "testrun.wdl:99:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annotsv/testrun.wdl/#L99"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-annotsv/ww-annotsv.wdl"
@@ -68,6 +78,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-annovar/testrun.wdl"
+message = "testrun.wdl:127:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annovar/testrun.wdl/#L127"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-annovar/testrun.wdl"
+message = "testrun.wdl:128:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annovar/testrun.wdl/#L128"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-annovar/testrun.wdl"
 message = "testrun.wdl:59:5: note[ShellCheck]: Consider using { cmd1; cmd2; } >> file instead of individual redirects."
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-annovar/testrun.wdl/#L59"
 
@@ -95,6 +115,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-aws-sso/testrun.wdl"
 message = "testrun.wdl:118:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-aws-sso/testrun.wdl/#L118"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-aws-sso/testrun.wdl"
+message = "testrun.wdl:119:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-aws-sso/testrun.wdl/#L119"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-aws-sso/testrun.wdl"
+message = "testrun.wdl:120:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-aws-sso/testrun.wdl/#L120"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-aws-sso/testrun.wdl"
@@ -223,6 +253,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-bcftools/testrun.wdl"
+message = "testrun.wdl:116:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bcftools/testrun.wdl/#L116"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-bcftools/testrun.wdl"
+message = "testrun.wdl:117:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bcftools/testrun.wdl/#L117"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-bcftools/testrun.wdl"
 message = "testrun.wdl:6:10: note[MetaSections]: workflow `bcftools_example` is missing a `meta` section"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bcftools/testrun.wdl/#L6"
 
@@ -273,6 +313,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-bedtools/testrun.wdl"
+message = "testrun.wdl:163:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bedtools/testrun.wdl/#L163"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-bedtools/testrun.wdl"
+message = "testrun.wdl:164:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bedtools/testrun.wdl/#L164"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-bedtools/testrun.wdl"
 message = "testrun.wdl:69:5: note[TodoComment]: remaining `TODO` item found"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bedtools/testrun.wdl/#L69"
 
@@ -315,6 +365,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-bwa/testrun.wdl"
 message = "testrun.wdl:156:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bwa/testrun.wdl/#L156"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-bwa/testrun.wdl"
+message = "testrun.wdl:157:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bwa/testrun.wdl/#L157"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-bwa/testrun.wdl"
+message = "testrun.wdl:158:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-bwa/testrun.wdl/#L158"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-bwa/testrun.wdl"
@@ -458,6 +518,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-delly/testrun.wdl"
+message = "testrun.wdl:113:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-delly/testrun.wdl/#L113"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-delly/testrun.wdl"
+message = "testrun.wdl:114:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-delly/testrun.wdl/#L114"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-delly/testrun.wdl"
 message = "testrun.wdl:64:16: note[ShellCheck]: Quote to prevent word splitting/globbing, or split robustly with mapfile or read -a."
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-delly/testrun.wdl/#L64"
 
@@ -505,6 +575,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-deseq2/testrun.wdl"
 message = "testrun.wdl:151:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-deseq2/testrun.wdl/#L151"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-deseq2/testrun.wdl"
+message = "testrun.wdl:152:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-deseq2/testrun.wdl/#L152"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-deseq2/testrun.wdl"
+message = "testrun.wdl:153:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-deseq2/testrun.wdl/#L153"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-deseq2/testrun.wdl"
@@ -685,6 +765,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-gatk/testrun.wdl"
 message = "testrun.wdl:529:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-gatk/testrun.wdl/#L529"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-gatk/testrun.wdl"
+message = "testrun.wdl:530:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-gatk/testrun.wdl/#L530"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-gatk/testrun.wdl"
+message = "testrun.wdl:531:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-gatk/testrun.wdl/#L531"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-gatk/ww-gatk.wdl"
@@ -883,6 +973,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-ichorcna/testrun.wdl"
+message = "testrun.wdl:232:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-ichorcna/testrun.wdl/#L232"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-ichorcna/testrun.wdl"
+message = "testrun.wdl:233:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-ichorcna/testrun.wdl/#L233"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-ichorcna/testrun.wdl"
 message = "testrun.wdl:78:5: note[TodoComment]: remaining `TODO` item found"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-ichorcna/testrun.wdl/#L78"
 
@@ -958,6 +1058,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-manta/testrun.wdl"
+message = "testrun.wdl:104:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-manta/testrun.wdl/#L104"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-manta/testrun.wdl"
+message = "testrun.wdl:105:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-manta/testrun.wdl/#L105"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-manta/testrun.wdl"
 message = "testrun.wdl:6:10: note[MetaSections]: workflow `manta_example` is missing a `meta` section"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-manta/testrun.wdl/#L6"
 
@@ -995,6 +1105,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-salmon/testrun.wdl"
 message = "testrun.wdl:166:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-salmon/testrun.wdl/#L166"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-salmon/testrun.wdl"
+message = "testrun.wdl:167:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-salmon/testrun.wdl/#L167"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-salmon/testrun.wdl"
+message = "testrun.wdl:168:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-salmon/testrun.wdl/#L168"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-salmon/testrun.wdl"
@@ -1070,6 +1190,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-samtools/testrun.wdl"
 message = "testrun.wdl:175:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-samtools/testrun.wdl/#L175"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-samtools/testrun.wdl"
+message = "testrun.wdl:176:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-samtools/testrun.wdl/#L176"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-samtools/testrun.wdl"
+message = "testrun.wdl:177:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-samtools/testrun.wdl/#L177"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-samtools/testrun.wdl"
@@ -1168,6 +1298,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-smoove/testrun.wdl"
+message = "testrun.wdl:134:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-smoove/testrun.wdl/#L134"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-smoove/testrun.wdl"
+message = "testrun.wdl:135:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-smoove/testrun.wdl/#L135"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-smoove/testrun.wdl"
 message = "testrun.wdl:74:5: note[ShellCheck]: Consider using { cmd1; cmd2; } >> file instead of individual redirects."
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-smoove/testrun.wdl/#L74"
 
@@ -1218,6 +1358,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-sourmash/testrun.wdl"
+message = "testrun.wdl:163:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-sourmash/testrun.wdl/#L163"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-sourmash/testrun.wdl"
+message = "testrun.wdl:164:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-sourmash/testrun.wdl/#L164"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-sourmash/testrun.wdl"
 message = "testrun.wdl:6:10: note[MetaSections]: workflow `sourmash_example` is missing a `meta` section"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-sourmash/testrun.wdl/#L6"
 
@@ -1255,6 +1405,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-sra/testrun.wdl"
 message = "testrun.wdl:120:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-sra/testrun.wdl/#L120"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-sra/testrun.wdl"
+message = "testrun.wdl:121:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-sra/testrun.wdl/#L121"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-sra/testrun.wdl"
+message = "testrun.wdl:122:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-sra/testrun.wdl/#L122"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-sra/testrun.wdl"
@@ -1302,6 +1462,16 @@ message = "testrun.wdl:169:13: note[ContainerUri]: container URI uses a mutable 
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-star/testrun.wdl/#L169"
 
 [[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-star/testrun.wdl"
+message = "testrun.wdl:170:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-star/testrun.wdl/#L170"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-star/testrun.wdl"
+message = "testrun.wdl:171:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-star/testrun.wdl/#L171"
+
+[[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-star/ww-star.wdl"
 message = "ww-star.wdl:157:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-star/ww-star.wdl/#L157"
@@ -1338,6 +1508,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
+message = "testrun.wdl:175:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L175"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
+message = "testrun.wdl:176:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L176"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
 message = "testrun.wdl:216:43: note[ShellCheck]: Consider using 'grep -c' instead of 'grep|wc -l'."
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L216"
 
@@ -1353,6 +1533,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
+message = "testrun.wdl:279:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L279"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
+message = "testrun.wdl:280:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L280"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
 message = "testrun.wdl:311:9: note[ShellCheck]: Consider using { cmd1; cmd2; } >> file instead of individual redirects."
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L311"
 
@@ -1365,6 +1555,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
 message = "testrun.wdl:363:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L363"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
+message = "testrun.wdl:364:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L364"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-strelka/testrun.wdl"
+message = "testrun.wdl:365:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-strelka/testrun.wdl/#L365"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-strelka/ww-strelka.wdl"
@@ -1603,6 +1803,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-testdata/ww-testdata.wdl"
+message = "ww-testdata.wdl:846:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-testdata/ww-testdata.wdl/#L846"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-testdata/ww-testdata.wdl"
+message = "ww-testdata.wdl:847:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-testdata/ww-testdata.wdl/#L847"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-testdata/ww-testdata.wdl"
 message = "ww-testdata.wdl:932:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-testdata/ww-testdata.wdl/#L932"
 
@@ -1618,6 +1828,11 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-tritonnp/ww-tritonnp.wdl"
+message = "ww-tritonnp.wdl:129:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-tritonnp/ww-tritonnp.wdl/#L129"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-tritonnp/ww-tritonnp.wdl"
 message = "ww-tritonnp.wdl:131:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-tritonnp/ww-tritonnp.wdl/#L131"
 
@@ -1630,6 +1845,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 document = "getwilds/wilds-wdl-library:/modules/ww-varscan/testrun.wdl"
 message = "testrun.wdl:177:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-varscan/testrun.wdl/#L177"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-varscan/testrun.wdl"
+message = "testrun.wdl:178:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-varscan/testrun.wdl/#L178"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/modules/ww-varscan/testrun.wdl"
+message = "testrun.wdl:179:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/modules/ww-varscan/testrun.wdl/#L179"
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/modules/ww-varscan/testrun.wdl"
@@ -1693,6 +1918,16 @@ permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c70
 
 [[diagnostics]]
 document = "getwilds/wilds-wdl-library:/workflows/ww-leukemia/ww-leukemia.wdl"
+message = "ww-leukemia.wdl:431:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/workflows/ww-leukemia/ww-leukemia.wdl/#L431"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/workflows/ww-leukemia/ww-leukemia.wdl"
+message = "ww-leukemia.wdl:432:5: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/workflows/ww-leukemia/ww-leukemia.wdl/#L432"
+
+[[diagnostics]]
+document = "getwilds/wilds-wdl-library:/workflows/ww-leukemia/ww-leukemia.wdl"
 message = "ww-leukemia.wdl:433:13: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/getwilds/wilds-wdl-library/blob/0aa8316110137c700125f78d0e47aaa1cfd4c611/workflows/ww-leukemia/ww-leukemia.wdl/#L433"
 
@@ -1743,8 +1978,23 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/arriba.wdl"
+message = "arriba.wdl:246:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L246"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/arriba.wdl"
 message = "arriba.wdl:249:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L249"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/arriba.wdl"
+message = "arriba.wdl:299:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L299"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/arriba.wdl"
+message = "arriba.wdl:300:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L300"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/arriba.wdl"
@@ -1753,8 +2003,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/arriba.wdl"
+message = "arriba.wdl:348:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L348"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/arriba.wdl"
 message = "arriba.wdl:350:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L350"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/arriba.wdl"
+message = "arriba.wdl:397:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/arriba.wdl/#L397"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/arriba.wdl"
@@ -1763,8 +2023,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/bwa.wdl"
+message = "bwa.wdl:194:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L194"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/bwa.wdl"
 message = "bwa.wdl:196:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L196"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/bwa.wdl"
+message = "bwa.wdl:297:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L297"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/bwa.wdl"
@@ -1773,13 +2043,28 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/bwa.wdl"
+message = "bwa.wdl:348:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L348"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/bwa.wdl"
 message = "bwa.wdl:350:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L350"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/bwa.wdl"
+message = "bwa.wdl:90:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L90"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/bwa.wdl"
 message = "bwa.wdl:92:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/bwa.wdl/#L92"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/deeptools.wdl"
+message = "deeptools.wdl:68:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/deeptools.wdl/#L68"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/deeptools.wdl"
@@ -1803,8 +2088,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/fastqc.wdl"
+message = "fastqc.wdl:65:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/fastqc.wdl/#L65"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/fastqc.wdl"
 message = "fastqc.wdl:67:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/fastqc.wdl/#L67"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/fq.wdl"
+message = "fq.wdl:168:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/fq.wdl/#L168"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/fq.wdl"
@@ -1853,6 +2148,11 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/gatk4.wdl"
+message = "gatk4.wdl:372:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/gatk4.wdl/#L372"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/gatk4.wdl"
 message = "gatk4.wdl:374:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/gatk4.wdl/#L374"
 
@@ -1873,13 +2173,33 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/htseq.wdl"
+message = "htseq.wdl:191:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/htseq.wdl/#L191"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/htseq.wdl"
+message = "htseq.wdl:192:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/htseq.wdl/#L192"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/htseq.wdl"
 message = "htseq.wdl:193:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/htseq.wdl/#L193"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/kraken2.wdl"
+message = "kraken2.wdl:129:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L129"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/kraken2.wdl"
 message = "kraken2.wdl:131:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L131"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/kraken2.wdl"
+message = "kraken2.wdl:192:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L192"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/kraken2.wdl"
@@ -1898,6 +2218,16 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/kraken2.wdl"
+message = "kraken2.wdl:45:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L45"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/kraken2.wdl"
+message = "kraken2.wdl:46:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L46"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/kraken2.wdl"
 message = "kraken2.wdl:47:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L47"
 
@@ -1905,6 +2235,11 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 document = "stjudecloud/workflows:/tools/kraken2.wdl"
 message = "kraken2.wdl:99:16: note[KnownRules]: unknown rule `ExpressionSpacing`"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/kraken2.wdl/#L99"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/librarian.wdl"
+message = "librarian.wdl:55:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/librarian.wdl/#L55"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/librarian.wdl"
@@ -1918,8 +2253,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/mosdepth.wdl"
+message = "mosdepth.wdl:70:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/mosdepth.wdl/#L70"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/mosdepth.wdl"
 message = "mosdepth.wdl:72:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/mosdepth.wdl/#L72"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/multiqc.wdl"
+message = "multiqc.wdl:67:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/multiqc.wdl/#L67"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/multiqc.wdl"
@@ -1928,8 +2273,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/ngsderive.wdl"
+message = "ngsderive.wdl:140:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L140"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/ngsderive.wdl"
 message = "ngsderive.wdl:142:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L142"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/ngsderive.wdl"
+message = "ngsderive.wdl:204:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L204"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/ngsderive.wdl"
@@ -1938,8 +2293,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/ngsderive.wdl"
+message = "ngsderive.wdl:251:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L251"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/ngsderive.wdl"
 message = "ngsderive.wdl:253:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L253"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/ngsderive.wdl"
+message = "ngsderive.wdl:339:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L339"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/ngsderive.wdl"
@@ -1953,8 +2318,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/ngsderive.wdl"
+message = "ngsderive.wdl:87:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L87"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/ngsderive.wdl"
 message = "ngsderive.wdl:89:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/ngsderive.wdl/#L89"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/picard.wdl"
+message = "picard.wdl:1046:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/picard.wdl/#L1046"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/picard.wdl"
@@ -2018,8 +2393,23 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/picard.wdl"
+message = "picard.wdl:918:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/picard.wdl/#L918"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/picard.wdl"
 message = "picard.wdl:920:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/picard.wdl/#L920"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/picard.wdl"
+message = "picard.wdl:990:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/picard.wdl/#L990"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/picard.wdl"
+message = "picard.wdl:991:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/picard.wdl/#L991"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/picard.wdl"
@@ -2038,8 +2428,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/sambamba.wdl"
+message = "sambamba.wdl:115:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L115"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/sambamba.wdl"
 message = "sambamba.wdl:117:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L117"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/sambamba.wdl"
+message = "sambamba.wdl:170:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L170"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/sambamba.wdl"
@@ -2048,8 +2448,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/sambamba.wdl"
+message = "sambamba.wdl:226:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L226"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/sambamba.wdl"
 message = "sambamba.wdl:228:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L228"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/sambamba.wdl"
+message = "sambamba.wdl:283:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L283"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/sambamba.wdl"
@@ -2058,8 +2468,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/sambamba.wdl"
+message = "sambamba.wdl:55:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L55"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/sambamba.wdl"
 message = "sambamba.wdl:57:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/sambamba.wdl/#L57"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:1060:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L1060"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
@@ -2078,8 +2498,23 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:1351:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L1351"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:1352:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L1352"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
 message = "samtools.wdl:1354:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L1354"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:144:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L144"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
@@ -2088,8 +2523,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:202:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L202"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
 message = "samtools.wdl:204:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L204"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:261:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L261"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
@@ -2103,8 +2548,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:410:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L410"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
 message = "samtools.wdl:412:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L412"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:497:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L497"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
@@ -2113,8 +2568,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:605:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L605"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
 message = "samtools.wdl:607:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L607"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/samtools.wdl"
+message = "samtools.wdl:692:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/samtools.wdl/#L692"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/samtools.wdl"
@@ -2143,8 +2608,18 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/star.wdl"
+message = "star.wdl:905:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/star.wdl/#L905"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/star.wdl"
 message = "star.wdl:907:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/star.wdl/#L907"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/util.wdl"
+message = "util.wdl:129:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/util.wdl/#L129"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/util.wdl"
@@ -2178,6 +2653,11 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/util.wdl"
+message = "util.wdl:352:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/util.wdl/#L352"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/util.wdl"
 message = "util.wdl:354:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/util.wdl/#L354"
 
@@ -2195,6 +2675,11 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 document = "stjudecloud/workflows:/tools/util.wdl"
 message = "util.wdl:44:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/util.wdl/#L44"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/tools/util.wdl"
+message = "util.wdl:463:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/tools/util.wdl/#L463"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/tools/util.wdl"
@@ -2243,13 +2728,53 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:196:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L196"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
 message = "methylation-cohort.wdl:249:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L249"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:250:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L250"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:251:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L251"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
 message = "methylation-cohort.wdl:288:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L288"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:289:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L289"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:290:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L290"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:325:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L325"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:326:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L326"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
+message = "methylation-cohort.wdl:327:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-cohort.wdl/#L327"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/workflows/methylation/methylation-cohort.wdl"
@@ -2260,6 +2785,16 @@ permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3
 document = "stjudecloud/workflows:/workflows/methylation/methylation-preprocess.wdl"
 message = "methylation-preprocess.wdl:64:20: note[ContainerUri]: container URI uses a mutable tag"
 permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-preprocess.wdl/#L64"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-preprocess.wdl"
+message = "methylation-preprocess.wdl:65:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-preprocess.wdl/#L65"
+
+[[diagnostics]]
+document = "stjudecloud/workflows:/workflows/methylation/methylation-preprocess.wdl"
+message = "methylation-preprocess.wdl:66:9: note[ParameterizedResources]: static resource allocation"
+permalink = "https://github.com/stjudecloud/workflows/blob/60c4e506136dbebc687c3db7b1e8d3a745f488c8/workflows/methylation/methylation-preprocess.wdl/#L66"
 
 [[diagnostics]]
 document = "stjudecloud/workflows:/workflows/qc/quality-check-standard.wdl"

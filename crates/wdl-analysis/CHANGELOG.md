@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `sprocket.toml`, defaulting to `false` ([#831](https://github.com/stjude-rust-labs/sprocket/pull/831)).
 * `VersionVisitor` diagnostic when a document declares `version 1.4`
   without the `wdl_1_4` feature flag enabled ([#831](https://github.com/stjude-rust-labs/sprocket/pull/831)).
+* `Visitor::requirements_item()` ([#847](github.com/stjude-rust-labs/sprocket/pull/847)).
 
 ## 0.19.1 - 2026-04-22
 
