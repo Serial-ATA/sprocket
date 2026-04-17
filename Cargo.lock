@@ -4877,6 +4877,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
+ "bollard",
  "bon",
  "chrono",
  "clap",
@@ -4931,6 +4932,7 @@ dependencies = [
  "uuid",
  "walkdir",
  "wdl",
+ "which",
  "whoami 2.1.1",
  "zip 8.4.0",
 ]

@@ -51,6 +51,7 @@ async fn create_test_server(
             ..Default::default()
         },
         db.clone(),
+        Arc::default(),
     );
 
     // Wait for manager to be ready

@@ -16,6 +16,7 @@ use uuid::Uuid;
 use wdl::engine::CancellationContext;
 use wdl::engine::CancellationContextState;
 use wdl::engine::Events;
+use wdl::engine::v1::ImageOverrideMap;
 
 use crate::config::Config;
 use crate::config::FallbackVersion;
@@ -80,11 +81,20 @@ pub struct RunManagerSvc {
     /// A [`tokio::sync::Mutex`] is used because the [`run()`][Self::run] future
     /// must be `Send`.
     runs: Arc<Mutex<HashMap<Uuid, CancellationContext>>>,
+    /// See [`Evaluator`].image_overrides.
+    ///
+    /// [`Evaluator`]: wdl::engine::v1::Evaluator
+    image_overrides: Arc<ImageOverrideMap>,
 }
 
 impl RunManagerSvc {
     /// Create a new run manager.
-    pub fn new(config: Config, db: Arc<dyn Database>, rx: Rx) -> Self {
+    pub fn new(
+        config: Config,
+        db: Arc<dyn Database>,
+        rx: Rx,
+        image_overrides: Arc<ImageOverrideMap>,
+    ) -> Self {
         let fallback_version = config.common.wdl.fallback_version;
         let config = config.server;
         let semaphore = config
@@ -106,6 +116,7 @@ impl RunManagerSvc {
             rx,
             semaphore,
             runs: Default::default(),
+            image_overrides,
         }
     }
 
@@ -252,9 +263,10 @@ impl RunManagerSvc {
         channel_buffer_size: usize,
         config: Config,
         db: Arc<dyn Database>,
+        image_overrides: Arc<ImageOverrideMap>,
     ) -> (JoinHandle<()>, mpsc::Sender<RunManagerCmd>) {
         let (tx, rx) = mpsc::channel(channel_buffer_size);
-        let manager = Self::new(config, db, rx);
+        let manager = Self::new(config, db, rx, image_overrides);
         let handle = tokio::spawn(manager.run());
         (handle, tx)
     }
@@ -297,6 +309,7 @@ impl RunManagerSvc {
             .maybe_target(target)
             .inputs(inputs)
             .maybe_index_on(index_on)
+            .image_overrides(Arc::clone(&self.image_overrides))
             .build();
 
         let semaphore = self.semaphore.clone();

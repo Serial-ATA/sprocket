@@ -31,6 +31,7 @@ async-trait = "0.1.89"
 axum = "0.8.8"
 bimap = "0.6.3"
 blake3 = { version = "1.8.3", features = ["mmap"] }
+bollard = "0.19.2"
 bon = "3.8.2"
 bytesize = { version = "2.3.1", features = ["serde"] }
 chrono = "0.4.43"
@@ -161,6 +162,7 @@ readme = "README.md"
 anyhow.workspace = true
 async-trait.workspace = true
 axum.workspace = true
+bollard.workspace = true
 bon.workspace = true
 chrono.workspace = true
 clap.workspace = true
@@ -210,6 +212,7 @@ utoipa-swagger-ui.workspace = true
 uuid.workspace = true
 walkdir.workspace = true
 wdl.workspace = true
+which.workspace = true
 whoami.workspace = true
 
 [dev-dependencies]

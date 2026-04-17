@@ -15,6 +15,7 @@ use wdl::engine::Events;
 use wdl::engine::Inputs;
 use wdl::engine::Outputs;
 use wdl::engine::v1::Evaluator as WdlEvaluator;
+use wdl::engine::v1::ImageOverrideMap;
 
 /// An evaluator for a WDL task or workflow.
 pub struct Evaluator<'a> {
@@ -35,6 +36,9 @@ pub struct Evaluator<'a> {
 
     /// The output directory.
     output_dir: &'a Path,
+
+    /// See [`WdlEvaluator`].image_overrides.
+    image_overrides: Arc<ImageOverrideMap>,
 }
 
 impl<'a> Evaluator<'a> {
@@ -46,6 +50,7 @@ impl<'a> Evaluator<'a> {
         base_dir: &'a EvaluationPath,
         config: Arc<Config>,
         output_dir: &'a Path,
+        image_overrides: Arc<ImageOverrideMap>,
     ) -> Self {
         Self {
             document,
@@ -54,6 +59,7 @@ impl<'a> Evaluator<'a> {
             base_dir,
             config,
             output_dir,
+            image_overrides,
         }
     }
 
@@ -90,8 +96,9 @@ impl<'a> Evaluator<'a> {
         // their respective origin paths.
         inputs.join_paths(task, |_| Ok(self.base_dir)).await?;
 
-        let evaluator =
-            WdlEvaluator::new(self.output_dir, self.config, cancellation, events).await?;
+        let evaluator = WdlEvaluator::new(self.output_dir, self.config, cancellation, events)
+            .await?
+            .with_image_overrides(self.image_overrides);
         evaluator
             .evaluate_task(self.document, task, inputs, self.output_dir)
             .await
@@ -126,7 +133,9 @@ impl<'a> Evaluator<'a> {
                 inputs.join_paths(workflow, |_| Ok(self.base_dir)).await?;
 
                 let evaluator =
-                    WdlEvaluator::new(self.output_dir, self.config, cancellation, events).await?;
+                    WdlEvaluator::new(self.output_dir, self.config, cancellation, events)
+                        .await?
+                        .with_image_overrides(self.image_overrides);
                 evaluator
                     .evaluate_workflow(self.document, inputs, self.output_dir)
                     .await

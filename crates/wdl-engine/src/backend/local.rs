@@ -44,6 +44,7 @@ use crate::config::Config;
 use crate::config::TaskResourceLimitBehavior;
 use crate::convert_unit_string;
 use crate::http::Transferer;
+use crate::v1::ImageOverrideMap;
 use crate::v1::requirements;
 
 /// Represents a local task request.
@@ -289,6 +290,7 @@ impl TaskExecutionBackend for LocalBackend {
         &self,
         inputs: &TaskInputs,
         requirements: &HashMap<String, Value>,
+        _: &ImageOverrideMap,
         _: &HashMap<String, Value>,
     ) -> Result<TaskExecutionConstraints> {
         let mut cpu = requirements::cpu(inputs, requirements);

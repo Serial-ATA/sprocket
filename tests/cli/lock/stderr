@@ -1,0 +1,20 @@
+note: unknown container source
+   ┌─ source.wdl:58:21
+   │
+58 │         container: ["unknown://foo", "python:3"]
+   │                     ^^^^^^^^^^^^^^^ this will not be included in the lockfile
+
+note: no container specified
+   ┌─ source.wdl:62:6
+   │
+62 │ task no_container {
+   │      ^^^^^^^^^^^^
+   │
+   = help: consider adding a `requirements` section
+
+warning: container with placeholder
+   ┌─ source.wdl:74:20
+   │
+74 │         container: "python:~{python_tag}"
+   │                    ^^^^^^^^^^^^^^^^^^^^^^ lock entries cannot be generated for placeholder values
+

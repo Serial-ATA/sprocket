@@ -15,7 +15,9 @@ use std::sync::Mutex;
 use anyhow::Context;
 use anyhow::Result;
 pub(crate) use expr::*;
+use serde::Deserialize;
 use serde::Serialize;
+pub use task::requirements::ContainerSource;
 pub(crate) use task::*;
 use tokio::sync::broadcast;
 use tracing::info;
@@ -50,6 +52,44 @@ fn write_json_file(path: impl AsRef<Path>, value: &impl Serialize) -> Result<()>
         .with_context(|| format!("failed to write file `{path}`", path = path.display()))
 }
 
+/// A map of container image overrides.
+///
+/// `<image name> -> <override>`
+///
+/// This is used in Sprocket lockfiles to map mutable image tags (e.g.
+/// `ubuntu:latest`) to an immutable hash (e.g.
+/// `ubuntu@sha256:
+/// c4a8d5503dfb2a3eb8ab5f807da5bc69a85730fb49b5cfca2330194ebcc41c7b`).
+///
+/// See also: [`ImageDigests`].
+pub type ImageOverrideMap = HashMap<String, ImageDigests>;
+
+/// The digest specification for a container image.
+///
+/// This bridges the gap between OCI-compliant and non-compliant registries with
+/// regards to storing architecture-specific hashes.
+///
+/// See also: [`ImageOverrideMap`].
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum ImageDigests {
+    /// (Possibly) multi-arch OCI manifest index.
+    ///
+    /// For OCI-compatible registries, all supported architectures can be
+    /// identified under a single umbrella index hash. The runtime (e.g.,
+    /// Docker) is responsible for determining the appropriate image for the
+    /// host architecture based on that hash.
+    OciManifest(ContainerSource),
+    /// Per-architecture image hashes.
+    ///
+    /// This is used for non-OCI registries (e.g., Sylabs Cloud Library) where
+    /// each image is an entirely separate artifact, and is thus hashed
+    /// separately.
+    ///
+    /// The keys of the map match [`std::env::consts::ARCH`] values.
+    PerArch(HashMap<String, ContainerSource>),
+}
+
 /// Represents a WDL evaluator.
 ///
 /// The evaluator is used to evaluate a specific task or the workflow of an
@@ -72,6 +112,10 @@ pub struct Evaluator {
     events: Option<broadcast::Sender<EngineEvent>>,
     /// Cache for evaluated enum variant values to avoid redundant AST lookups.
     variant_cache: Arc<Mutex<HashMap<EnumVariantCacheKey, Value>>>,
+    /// Container image overrides.
+    ///
+    /// See [`ImageOverrideMap`].
+    image_overrides: Arc<ImageOverrideMap>,
 }
 
 impl Evaluator {
@@ -125,6 +169,13 @@ impl Evaluator {
             cache,
             events: events.engine().clone(),
             variant_cache: Default::default(),
+            image_overrides: Arc::default(),
         })
+    }
+
+    /// Add a set of container image overrides.
+    pub fn with_image_overrides(mut self, overrides: Arc<ImageOverrideMap>) -> Self {
+        self.image_overrides = overrides;
+        self
     }
 }

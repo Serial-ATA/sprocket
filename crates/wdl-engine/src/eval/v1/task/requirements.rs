@@ -8,6 +8,10 @@ use std::str::FromStr;
 use anyhow::Context;
 use anyhow::Result;
 use anyhow::bail;
+use serde::Deserialize;
+use serde::Deserializer;
+use serde::Serialize;
+use serde::Serializer;
 use tracing::warn;
 use wdl_analysis::types::PrimitiveType;
 use wdl_ast::v1::TASK_HINT_DISKS;
@@ -28,6 +32,8 @@ use crate::Value;
 use crate::config::Config;
 use crate::units::StorageUnit;
 use crate::v1::DEFAULT_DISK_MOUNT_POINT;
+use crate::v1::ImageDigests;
+use crate::v1::ImageOverrideMap;
 use crate::v1::task::DEFAULT_GPU_COUNT;
 use crate::v1::task::DEFAULT_TASK_REQUIREMENT_CPU;
 use crate::v1::task::DEFAULT_TASK_REQUIREMENT_MAX_RETRIES;
@@ -147,6 +153,41 @@ impl std::fmt::Display for ContainerSource {
     }
 }
 
+impl<'de> Deserialize<'de> for ContainerSource {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct Visitor;
+
+        impl<'de> serde::de::Visitor<'de> for Visitor {
+            type Value = ContainerSource;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("a container source")
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                ContainerSource::from_str(v).map_err(serde::de::Error::custom)
+            }
+        }
+
+        deserializer.deserialize_str(Visitor)
+    }
+}
+
+impl Serialize for ContainerSource {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&format!("{self:#}"))
+    }
+}
+
 /// Gets the `container` requirement from a requirements map.
 ///
 /// Returns a [`ContainerSource`] indicating whether the container is a
@@ -154,6 +195,7 @@ impl std::fmt::Display for ContainerSource {
 pub(crate) fn container(
     inputs: &TaskInputs,
     requirements: &HashMap<String, Value>,
+    overrides: &ImageOverrideMap,
     default: &str,
 ) -> ContainerSource {
     let value: Cow<'_, str> = find_key_value(
@@ -187,6 +229,24 @@ pub(crate) fn container(
         if v == "*" { None } else { Some(v) }
     })
     .unwrap_or_else(|| default.into());
+
+    if let Some(image_override) = overrides.get(&*value) {
+        match image_override {
+            ImageDigests::OciManifest(image_override) => return image_override.clone(),
+            ImageDigests::PerArch(overrides) => {
+                if std::env::consts::ARCH == "powerpc64"
+                    && cfg!(target_endian = "little")
+                    && let Some(image_override) = overrides.get("ppc64le")
+                {
+                    return image_override.clone();
+                }
+
+                if let Some(image_override) = overrides.get(std::env::consts::ARCH) {
+                    return image_override.clone();
+                }
+            }
+        }
+    }
 
     // SAFETY: `FromStr` for `ContainerSource` is infallible.
     value.parse().unwrap()
@@ -662,7 +722,13 @@ mod tests {
         requirements.insert("max_retries".to_string(), PrimitiveValue::from(1).into());
 
         assert_eq!(
-            container(&inputs, &requirements, DEFAULT_TASK_CONTAINER).to_string(),
+            container(
+                &inputs,
+                &requirements,
+                &HashMap::new(),
+                DEFAULT_TASK_CONTAINER
+            )
+            .to_string(),
             "foo:bar"
         );
 

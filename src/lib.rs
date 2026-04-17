@@ -149,7 +149,7 @@ async fn real_main() -> CommandResult<()> {
             commands::doc::doc(args, config, colorize).await
         }
         Commands::Dev(commands::DevCommands::Lock(args)) => {
-            commands::lock::lock(args, config).await
+            commands::lock::lock(args, config, colorize).await
         }
         Commands::Dev(commands::DevCommands::Server(args)) => {
             commands::server::server(args, config).await

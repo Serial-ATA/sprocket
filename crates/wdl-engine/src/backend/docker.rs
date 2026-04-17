@@ -47,6 +47,7 @@ use crate::config::Config;
 use crate::config::TaskResourceLimitBehavior;
 use crate::http::Transferer;
 use crate::v1::DEFAULT_DISK_MOUNT_POINT;
+use crate::v1::ImageOverrideMap;
 use crate::v1::hints;
 use crate::v1::requirements;
 use crate::v1::requirements::ContainerSource;
@@ -462,9 +463,15 @@ impl TaskExecutionBackend for DockerBackend {
         &self,
         inputs: &TaskInputs,
         requirements: &HashMap<String, Value>,
+        image_overrides: &ImageOverrideMap,
         hints: &HashMap<String, Value>,
     ) -> Result<TaskExecutionConstraints> {
-        let container = requirements::container(inputs, requirements, &self.config.task.container);
+        let container = requirements::container(
+            inputs,
+            requirements,
+            image_overrides,
+            &self.config.task.container,
+        );
         match &container {
             ContainerSource::Docker(_) => {}
             ContainerSource::Library(_) | ContainerSource::Oras(_) => {

@@ -21,6 +21,9 @@ mod api;
 
 pub use api::AppState;
 
+use crate::commands::lock::LOCK_FILE;
+use crate::commands::lock::LockFile;
+
 /// The default channel buffer size.
 ///
 /// A reasonably large, arbitrary number for buffering commands to the run
@@ -56,9 +59,19 @@ pub fn create_router(state: AppState, cors_layer: CorsLayer) -> Router {
 /// Returns an error if the server fails to start or bind to the address.
 pub async fn run(config: Config) -> anyhow::Result<()> {
     let db_path = config.server.database_url();
-
     let db = open_database(&db_path).await?;
-    let (_, run_manager_tx) = RunManagerSvc::spawn(DEFAULT_CHANNEL_BUFFER_SIZE, config.clone(), db);
+
+    let lock_file_path = std::env::current_dir()
+        .context("failed to get current directory")?
+        .join(LOCK_FILE);
+    let lock_file = LockFile::load(lock_file_path)?.unwrap_or_default();
+
+    let (_, run_manager_tx) = RunManagerSvc::spawn(
+        DEFAULT_CHANNEL_BUFFER_SIZE,
+        config.clone(),
+        db,
+        lock_file.images,
+    );
 
     let state = AppState::builder().run_manager_tx(run_manager_tx).build();
 

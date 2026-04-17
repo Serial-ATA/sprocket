@@ -68,6 +68,7 @@ use crate::config::Config;
 use crate::config::LsfApptainerBackendConfig;
 use crate::config::TaskResourceLimitBehavior;
 use crate::http::Transferer;
+use crate::v1::ImageOverrideMap;
 use crate::v1::requirements;
 use crate::v1::requirements::ContainerSource;
 
@@ -753,6 +754,7 @@ impl TaskExecutionBackend for LsfApptainerBackend {
         &self,
         inputs: &TaskInputs,
         requirements: &HashMap<String, Value>,
+        image_overrides: &ImageOverrideMap,
         hints: &HashMap<String, Value>,
     ) -> Result<TaskExecutionConstraints> {
         let mut required_cpu = requirements::cpu(inputs, requirements);
@@ -822,7 +824,12 @@ impl TaskExecutionBackend for LsfApptainerBackend {
             }
         }
 
-        let container = requirements::container(inputs, requirements, &self.config.task.container);
+        let container = requirements::container(
+            inputs,
+            requirements,
+            image_overrides,
+            &self.config.task.container,
+        );
         if let ContainerSource::Unknown(_) = &container {
             bail!("LSF Apptainer backend does not support unknown container source `{container:#}`")
         }

@@ -53,6 +53,8 @@ use crate::analysis::Analysis;
 use crate::analysis::Source;
 use crate::commands::CommandError;
 use crate::commands::CommandResult;
+use crate::commands::lock::LOCK_FILE;
+use crate::commands::lock::LockFile;
 use crate::inputs::Invocation;
 use crate::system::v1::db::SprocketCommand;
 use crate::system::v1::exec::RunContext;
@@ -522,6 +524,11 @@ pub async fn run(
         return Err(anyhow!("directory sources are not supported for the `run` command").into());
     }
 
+    let lock_file_path = std::env::current_dir()
+        .context("failed to get current directory")?
+        .join(LOCK_FILE);
+    let lock_file = LockFile::load(lock_file_path)?;
+
     let report_mode = args.report_mode.unwrap_or(config.common.report_mode);
     args.apply_engine_config(&mut config.run.engine);
 
@@ -752,6 +759,7 @@ pub async fn run(
         config.run.engine,
         cancellation.clone(),
         events,
+        lock_file.map(|f| Arc::clone(&f.images)).unwrap_or_default(),
         target,
         inputs,
         &run_dir,

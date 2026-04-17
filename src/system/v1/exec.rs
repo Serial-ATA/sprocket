@@ -36,6 +36,7 @@ use wdl::engine::Outputs;
 use wdl::engine::TaskInputs;
 use wdl::engine::WorkflowInputs;
 use wdl::engine::v1::Evaluator;
+use wdl::engine::v1::ImageOverrideMap;
 
 use crate::analysis::Source;
 use crate::system::v1::db::Database;
@@ -335,6 +336,8 @@ pub struct RunnableExecutor {
     inputs: JsonObject,
     /// Index key for result indexing, if requested.
     index_on: Option<String>,
+    /// See [`Evaluator`].image_overrides.
+    image_overrides: Arc<ImageOverrideMap>,
 }
 
 impl RunnableExecutor {
@@ -512,6 +515,7 @@ impl RunnableExecutor {
             self.engine_config,
             self.cancellation,
             self.events,
+            self.image_overrides,
             resolved_target,
             inputs,
             &run_dir,
@@ -680,12 +684,10 @@ async fn set_run_success(
 /// Returns `Ok(None)` if the workflow was canceled.
 #[allow(clippy::too_many_arguments)]
 async fn execute_workflow_target(
+    evaluator: Evaluator,
     db: &dyn Database,
     ctx: &RunContext,
     document: &AnalysisDocument,
-    config: Arc<WdlConfig>,
-    cancellation: CancellationContext,
-    events: Events,
     inputs: Inputs,
     run_dir: &RunDirectory,
     base_dir: &EvaluationPath,
@@ -723,10 +725,6 @@ async fn execute_workflow_target(
         .await
         .context("failed to resolve input paths")?;
 
-    let evaluator = Evaluator::new(run_dir.root(), config, cancellation, events)
-        .await
-        .context("failed to create workflow evaluator")?;
-
     match evaluator
         .evaluate_workflow(document, inputs, run_dir.root())
         .await
@@ -748,12 +746,10 @@ async fn execute_workflow_target(
 /// Returns `Ok(None)` if the task was canceled.
 #[allow(clippy::too_many_arguments)]
 async fn execute_task_target(
+    evaluator: Evaluator,
     db: &dyn Database,
     ctx: &RunContext,
     document: &AnalysisDocument,
-    config: Arc<WdlConfig>,
-    cancellation: CancellationContext,
-    events: Events,
     target: &Target,
     inputs: Inputs,
     run_dir: &RunDirectory,
@@ -783,10 +779,6 @@ async fn execute_task_target(
         .await
         .context("failed to resolve input paths")?;
 
-    let evaluator = Evaluator::new(run_dir.root(), config, cancellation, events)
-        .await
-        .context("failed to create task evaluator")?;
-
     let evaluated_task = match evaluator
         .evaluate_task(document, task, inputs, run_dir.root())
         .await
@@ -807,22 +799,23 @@ async fn execute_task_target(
 ///
 /// # Arguments
 ///
-/// - `db` is a reference to the database and is used to update various aspects
+/// * `db` - A reference to the database and is used to update various aspects
 ///   of the database as execution proceeds.
-/// - `ctx` is the context of the run created for this execution (run UUID, run
+/// * `ctx` - The context of the run created for this execution (run UUID, run
 ///   name, start time, etc).
-/// - `document` is the analysis document containing the task or workflow to
+/// * `document` - The analysis document containing the task or workflow to
 ///   execute.
-/// - `config` is the WDL engine configuration to use during evaluation.
-/// - `cancellation` is the cancellation context for this run.
-/// - `events` is the events system for progress reporting.
-/// - `target` is the target we are attempting to execute.
-/// - `inputs` is the unparsed version of the inputs as JSON.
-/// - `run_dir` is the run directory to output the results to.
-/// - `base_dir` is the directory from which relative paths in inputs should be
+/// * `config` - The WDL engine configuration to use during evaluation.
+/// * `cancellation` - The cancellation context for this run.
+/// * `events` - The events system for progress reporting.
+/// * `image_overrides` - Container image overrides, see [`ImageOverrideMap`].
+/// * `target` - The target we are attempting to execute.
+/// * `inputs` - Tthe unparsed version of the inputs as JSON.
+/// * `run_dir` - The run directory to output the results to.
+/// * `base_dir` - The directory from which relative paths in inputs should be
 ///   resolved. For the server, this is typically the server's working
 ///   directory. For the CLI, paths should already be absolute.
-/// - `index_on` is the key to index results on, if provided.
+/// * `index_on` - The key to index results on, if provided.
 #[allow(clippy::too_many_arguments)]
 pub async fn execute_target(
     db: Arc<dyn Database>,
@@ -831,6 +824,7 @@ pub async fn execute_target(
     config: WdlConfig,
     cancellation: CancellationContext,
     events: Events,
+    image_overrides: Arc<ImageOverrideMap>,
     target: Target,
     inputs: Inputs,
     run_dir: &RunDirectory,
@@ -843,15 +837,18 @@ pub async fn execute_target(
         .map_err(anyhow::Error::from)?;
 
     let result: Result<Option<Outputs>, EvaluationError> = async {
+        let evaluator = Evaluator::new(run_dir.root(), config, cancellation, events)
+            .await
+            .context("failed to create workflow evaluator")?
+            .with_image_overrides(image_overrides);
+
         match &target {
             Target::Task(_) => {
                 execute_task_target(
+                    evaluator,
                     db.as_ref(),
                     ctx,
                     &document,
-                    config,
-                    cancellation,
-                    events,
                     &target,
                     inputs,
                     run_dir,
@@ -861,12 +858,10 @@ pub async fn execute_target(
             }
             Target::Workflow(_) => {
                 execute_workflow_target(
+                    evaluator,
                     db.as_ref(),
                     ctx,
                     &document,
-                    config,
-                    cancellation,
-                    events,
                     inputs,
                     run_dir,
                     base_dir,

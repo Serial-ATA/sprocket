@@ -105,6 +105,7 @@ use crate::stdlib::download_file;
 use crate::tree::SyntaxNode;
 use crate::units::convert_unit_string;
 use crate::v1::INPUTS_FILE;
+use crate::v1::ImageOverrideMap;
 use crate::v1::OUTPUTS_FILE;
 use crate::v1::expr::ExprEvaluator;
 use crate::v1::resolve_enum_variant_value;
@@ -733,6 +734,7 @@ impl Evaluator {
                     id,
                     &definition,
                     &inputs,
+                    &self.image_overrides,
                     attempt,
                     previous_task_data.clone(),
                 )
@@ -1686,6 +1688,7 @@ impl<'a> State<'a> {
         id: &str,
         definition: &TaskDefinition<SyntaxNode>,
         inputs: &TaskInputs,
+        image_overrides: &ImageOverrideMap,
         attempt: u64,
         previous_task_data: Option<Arc<TaskPostEvaluationData>>,
     ) -> EvaluationResult<EvaluatedSections> {
@@ -1756,7 +1759,7 @@ impl<'a> State<'a> {
         let constraints = self
             .evaluator
             .backend
-            .constraints(inputs, &requirements, &hints)
+            .constraints(inputs, &requirements, image_overrides, &hints)
             .with_context(|| {
                 format!(
                     "failed to get constraints for task `{task}`",

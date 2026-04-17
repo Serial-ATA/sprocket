@@ -78,6 +78,11 @@ impl Diagnostics {
     pub fn sort(&mut self) {
         self.0.sort();
     }
+
+    /// Get an iterator over the diagnostics.
+    pub fn iter(&self) -> std::slice::Iter<'_, Diagnostic> {
+        self.0.iter()
+    }
 }
 
 /// Implements an AST validator.

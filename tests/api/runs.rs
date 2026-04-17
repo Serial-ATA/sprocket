@@ -56,6 +56,7 @@ async fn create_test_server(
             ..Default::default()
         },
         db.clone(),
+        Arc::default(),
     );
 
     // Wait manager to be ready
@@ -2016,6 +2017,7 @@ async fn events_are_received_during_execution(pool: sqlx::SqlitePool) {
             ..Default::default()
         },
         db.clone(),
+        Arc::default(),
     );
 
     // Write workflow with task that will generate events

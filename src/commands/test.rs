@@ -39,6 +39,7 @@ use wdl::engine::Outputs;
 use wdl::engine::config::CallCachingMode;
 use wdl::engine::config::FailureMode;
 use wdl::engine::config::TaskResourceLimitBehavior;
+use wdl::engine::v1::ImageOverrideMap;
 
 use crate::Config;
 use crate::FilterReloadHandle;
@@ -46,6 +47,8 @@ use crate::analysis::Analysis;
 use crate::analysis::Source;
 use crate::commands::CommandError;
 use crate::commands::CommandResult;
+use crate::commands::lock::LOCK_FILE;
+use crate::commands::lock::LockFile;
 use crate::eval::Evaluator;
 use crate::system::v1::fs::RUNS_DIR;
 use crate::test::DocumentTests;
@@ -388,6 +391,7 @@ impl Runner {
         clean: bool,
         quiet: bool,
         errors: &mut Vec<Arc<anyhow::Error>>,
+        lock_file: LockFile,
     ) -> Result<IndexMap<String, DocumentResults>> {
         let current_filter = self.log_handle.clone_current().expect("should have filter");
         self.log_handle
@@ -531,6 +535,7 @@ impl Runner {
                                 assertions,
                                 document,
                                 wdl_inputs,
+                                Arc::clone(&lock_file.images),
                             )
                             .await;
                         } else {
@@ -554,6 +559,7 @@ impl Runner {
                                 assertions,
                                 document,
                                 wdl_inputs,
+                                Arc::clone(&lock_file.images),
                             )
                             .await;
                         }
@@ -582,6 +588,7 @@ impl Runner {
         Ok(all_results)
     }
 
+    #[allow(clippy::too_many_arguments)]
     async fn spawn_future(
         &self,
         futures: &mut JoinSet<TestIteration>,
@@ -590,6 +597,7 @@ impl Runner {
         assertions: Arc<ParsedAssertions>,
         document: wdl::analysis::Document,
         inputs: EngineInputs,
+        image_overrides: Arc<ImageOverrideMap>,
     ) {
         let is_workflow = matches!(inputs, EngineInputs::Workflow(_));
         let fixtures = self.fixtures.clone();
@@ -598,7 +606,15 @@ impl Runner {
         let events = Events::disabled();
         let target = id.target.clone();
         futures.spawn(async move {
-            let evaluator = Evaluator::new(&document, &target, inputs, &fixtures, engine, &run_dir);
+            let evaluator = Evaluator::new(
+                &document,
+                &target,
+                inputs,
+                &fixtures,
+                engine,
+                &run_dir,
+                image_overrides,
+            );
             let cancellation = CancellationContext::new(FailureMode::Fast);
             TestIteration {
                 id,
@@ -716,6 +732,11 @@ pub async fn test(
         })?
         .clean();
 
+    let lock_file_path = std::env::current_dir()
+        .context("failed to get current directory")?
+        .join(LOCK_FILE);
+    let lock_file = LockFile::load(lock_file_path)?.unwrap_or_default();
+
     let analysis_results = Analysis::default()
         .add_source(source.clone())
         .fallback_version(config.common.wdl.fallback_version.inner().cloned())
@@ -813,6 +834,7 @@ pub async fn test(
             !args.no_clean,
             args.no_status,
             &mut errors,
+            lock_file,
         )
         .await?;
 

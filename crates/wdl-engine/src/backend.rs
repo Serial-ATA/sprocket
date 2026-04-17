@@ -33,6 +33,8 @@ pub use lsf_apptainer::*;
 pub use slurm_apptainer::*;
 pub use tes::*;
 
+use crate::v1::ImageOverrideMap;
+
 /// The default root guest path for inputs.
 const GUEST_INPUTS_DIR: &str = "/mnt/task/inputs/";
 
@@ -233,6 +235,7 @@ pub(crate) trait TaskExecutionBackend: Send + Sync {
         &self,
         inputs: &TaskInputs,
         requirements: &HashMap<String, Value>,
+        image_overrides: &ImageOverrideMap,
         hints: &HashMap<String, Value>,
     ) -> Result<TaskExecutionConstraints>;
 
