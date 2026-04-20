@@ -693,14 +693,17 @@ pub async fn test(
     handle: FilterReloadHandle,
     colorize: bool,
 ) -> CommandResult<()> {
-    let source = args.source.unwrap_or_default();
+    let source = args.source.unwrap_or_else(Source::current_dir);
     let parallelism = args.parallelism.unwrap_or(config.test.parallelism);
     let (source, workspace) = match (&source, args.workspace) {
         (Source::Url(_), _) => {
             return Err(anyhow!("the `test` subcommand does not accept remote sources").into());
         }
+        (Source::Stdin(_), _) => {
+            return Err(anyhow!("the `test` subcommand does not accept stdin sources").into());
+        }
         (Source::Directory(_), Some(workspace)) => (source, workspace),
-        (Source::Directory(source_dir), None) => (source.clone(), source_dir.to_path_buf()),
+        (Source::Directory(source_dir), None) => (source.clone(), source_dir.path().to_path_buf()),
         (Source::File(_), Some(workspace)) => (source, workspace),
         (Source::File(_), None) => (
             source,

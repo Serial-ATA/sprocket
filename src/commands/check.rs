@@ -183,7 +183,7 @@ pub async fn check(args: CheckArgs, config: Config, colorize: bool) -> CommandRe
 
     let mut sources = args.common.sources;
     if sources.is_empty() {
-        sources.push(Source::default());
+        sources.push(Source::current_dir());
     }
 
     if args.common.suppress_imports {
@@ -191,8 +191,8 @@ pub async fn check(args: CheckArgs, config: Config, colorize: bool) -> CommandRe
             if let Source::Directory(dir) = source {
                 return Err(anyhow!(
                     "`--suppress-imports` was specified but the provided inputs contain a \
-                     directory: `{dir}`",
-                    dir = dir.display()
+                     directory: `{}`",
+                    dir.path().display()
                 )
                 .into());
             }
@@ -216,7 +216,7 @@ pub async fn check(args: CheckArgs, config: Config, colorize: bool) -> CommandRe
 
     let provided_source_uris = sources
         .iter()
-        .flat_map(|s| s.as_url())
+        .map(|s| s.as_url())
         .cloned()
         .collect::<HashSet<_>>();
 

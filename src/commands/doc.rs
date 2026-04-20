@@ -122,7 +122,9 @@ pub async fn doc(args: Args, config: Config, colorize: bool) -> CommandResult<()
         );
     }
 
-    let workspace = if let Source::Directory(workspace) = args.workspace.unwrap_or_default() {
+    let workspace = if let Source::Directory(workspace) =
+        args.workspace.unwrap_or_else(Source::current_dir)
+    {
         workspace
     } else {
         return Err(anyhow!("`workspace` must be a local directory for the `doc` command").into());
@@ -181,7 +183,9 @@ pub async fn doc(args: Args, config: Config, colorize: bool) -> CommandResult<()
         .transpose()?;
     let addl_html = AdditionalHtml::new(head, body_open, body_close);
 
-    let docs_dir = args.output.unwrap_or(workspace.join(DEFAULT_OUTPUT_DIR));
+    let docs_dir = args
+        .output
+        .unwrap_or(workspace.path().join(DEFAULT_OUTPUT_DIR));
 
     if args.overwrite && docs_dir.exists() {
         std::fs::remove_dir_all(&docs_dir).context("failed to delete docs directory")?;
@@ -200,7 +204,7 @@ pub async fn doc(args: Args, config: Config, colorize: bool) -> CommandResult<()
     let github_url = args.github_url.or(config.doc.github_url());
     let with_doc_comments = args.with_doc_comments || config.doc.with_doc_comments;
 
-    let config = DocConfig::new(analysis_config, &workspace, &docs_dir)
+    let config = DocConfig::new(analysis_config, workspace.path(), &docs_dir)
         .index_page(index_page)
         .init_light_mode(light_mode)
         .custom_theme(args.theme)
@@ -242,7 +246,7 @@ pub async fn doc(args: Args, config: Config, colorize: bool) -> CommandResult<()
                 return Err(anyhow::Error::new(e)
                     .context(format!(
                         "failed to generate documentation for workspace at `{}`",
-                        workspace.display()
+                        workspace.path().display()
                     ))
                     .into());
             }

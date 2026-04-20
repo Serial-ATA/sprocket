@@ -151,7 +151,7 @@ pub async fn format(args: Args, config: Config, colorize: bool) -> CommandResult
         FormatSubcommand::Check(s) => {
             let mut sources = s.sources;
             if sources.is_empty() {
-                sources.push(Source::default());
+                sources.push(Source::current_dir());
             }
 
             let results = Analysis::default()
@@ -202,16 +202,13 @@ pub async fn format(args: Args, config: Config, colorize: bool) -> CommandResult
         }
         FormatSubcommand::View(s) => {
             let source = s.source;
-            match &source {
-                Source::File(_) | Source::Url(_) => {}
-                Source::Directory(p) => {
-                    return Err(anyhow!(
-                        "the `format view` command does not support formatting directory `{path}`",
-                        path = p.display()
-                    )
-                    .into());
-                }
-            };
+            if let Source::Directory(p) = &source {
+                return Err(anyhow!(
+                    "the `format view` command does not support formatting directory `{}`",
+                    p.path().display()
+                )
+                .into());
+            }
 
             let results = Analysis::default()
                 .add_source(source.clone())
@@ -242,7 +239,7 @@ pub async fn format(args: Args, config: Config, colorize: bool) -> CommandResult
         FormatSubcommand::Overwrite(s) => {
             let mut sources = s.sources;
             if sources.is_empty() {
-                sources.push(Source::default());
+                sources.push(Source::current_dir());
             }
 
             let results = Analysis::default()

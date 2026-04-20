@@ -27,7 +27,7 @@ use wdl::lint::TagSet;
 use crate::IGNORE_FILENAME;
 
 /// The type of the initialization callback.
-type InitCb = Box<dyn Fn() + 'static>;
+type InitCb = Box<dyn Fn() + Send + Sync + 'static>;
 
 /// The type of the progress callback.
 type ProgressCb =
@@ -94,7 +94,7 @@ impl Analysis {
     /// Sets the initialization callback.
     pub fn init<F>(mut self, init: F) -> Self
     where
-        F: Fn() + 'static,
+        F: Fn() + Send + Sync + 'static,
     {
         self.init = Box::new(init);
         self
@@ -173,14 +173,14 @@ impl Analysis {
             validator
         });
 
-        let mut analyzer = Analyzer::new_with_validator(
+        let analyzer = Analyzer::new_with_validator(
             config,
             move |_, kind, count, total| (self.progress)(kind, count, total),
             validator,
         );
 
         for source in self.sources {
-            if let Err(error) = source.register(&mut analyzer).await {
+            if let Err(error) = source.register(&analyzer).await {
                 return Err(NonEmpty::new(Arc::new(error)));
             }
         }

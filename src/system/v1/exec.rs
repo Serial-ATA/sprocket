@@ -21,8 +21,6 @@ use tokio_retry2::strategy::ExponentialBackoff;
 use tracing::info;
 use uuid::Uuid;
 use wdl::analysis::AnalysisResult;
-use wdl::analysis::Analyzer;
-use wdl::analysis::Config as AnalysisConfig;
 use wdl::analysis::Document as AnalysisDocument;
 use wdl::ast::Severity;
 use wdl::ast::SupportedVersion;
@@ -37,6 +35,7 @@ use wdl::engine::TaskInputs;
 use wdl::engine::WorkflowInputs;
 use wdl::engine::v1::Evaluator;
 
+use crate::analysis::Analysis;
 use crate::analysis::Source;
 use crate::system::v1::db::Database;
 use crate::system::v1::db::DatabaseError;
@@ -57,6 +56,8 @@ pub use config::ConfigError;
 pub use config::ConfigResult;
 pub use names::generate_run_name;
 pub use source::validate as validate_source;
+
+use crate::commands::CommandResult;
 
 /// Represents a JSON object.
 type JsonObject = serde_json::Map<String, serde_json::Value>;
@@ -566,24 +567,18 @@ impl RunnableExecutor {
 pub async fn analyze_wdl_document(
     source: &Source,
     fallback_version: Option<SupportedVersion>,
-) -> Result<AnalysisResult> {
-    let config = AnalysisConfig::default().with_fallback_version(fallback_version);
-    let analyzer = Analyzer::new(config, |(), _, _, _| async {});
+) -> CommandResult<AnalysisResult> {
+    let results = Analysis::default()
+        .add_source(source.clone())
+        .fallback_version(fallback_version)
+        .run()
+        .await?;
 
-    let uri = source.to_url();
-    analyzer
-        .add_document(uri.clone())
-        .await
-        .context("failed to add document to analyzer")?;
-
-    let results = analyzer
-        .analyze(())
-        .await
-        .context("failed to analyze document")?;
-
-    for result in &results {
+    for result in results.as_slice() {
         if let Some(e) = result.error() {
-            bail!("parsing failed for `{}`: {:#}", result.document().uri(), e);
+            return Err(
+                anyhow!("parsing failed for `{}`: {:#}", result.document().uri(), e).into(),
+            );
         }
 
         if let Some(diagnostic) = result
@@ -591,18 +586,20 @@ pub async fn analyze_wdl_document(
             .diagnostics()
             .find(|d| d.severity() == Severity::Error)
         {
-            bail!(
+            return Err(anyhow!(
                 "analysis error in `{}`: {:?}",
                 result.document().uri(),
                 diagnostic
-            );
+            )
+            .into());
         }
     }
 
     results
         .into_iter()
-        .find(|result| **result.document().uri() == uri)
+        .find(|result| &**result.document().uri() == source.as_url())
         .context("analyzer didn't return analysis results for document")
+        .map_err(Into::into)
 }
 
 /// Handles successful run execution.

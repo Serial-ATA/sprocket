@@ -52,7 +52,7 @@ pub async fn lock(args: Args, config: Config) -> CommandResult<()> {
         .unwrap_or_else(|| PathBuf::from(std::path::Component::CurDir.as_os_str()))
         .join(LOCK_FILE);
 
-    let s = args.source.unwrap_or_default();
+    let s = args.source.unwrap_or_else(Source::current_dir);
     let results = Analysis::default()
         .add_source(s)
         .fallback_version(config.common.wdl.fallback_version.inner().cloned())

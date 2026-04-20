@@ -47,15 +47,11 @@ impl AnalysisResults {
     /// Attempts to find all analysis results that match any of the provided
     /// sources.
     pub fn filter(&self, sources: &[&Source]) -> impl Iterator<Item = &AnalysisResult> {
-        self.0.iter().filter(|r| {
-            let mut path = None;
+        self.0.iter().filter(move |r| {
             sources.iter().any(|s| match s {
                 Source::File(url) | Source::Url(url) => url == r.document().uri().as_ref(),
-                Source::Directory(dir) => path
-                    .get_or_insert_with(|| r.document().uri().to_file_path())
-                    .as_ref()
-                    .map(|p| p.starts_with(dir))
-                    .unwrap_or(false),
+                Source::Directory(dir) => dir.url() == &**r.document().uri(),
+                Source::Stdin(source) => source.url() == &**r.document().uri(),
             })
         })
     }

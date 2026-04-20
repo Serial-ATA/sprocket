@@ -310,12 +310,12 @@ fn source_to_url_and_display() -> Result<()> {
 
     // Test file source
     let file_source = validate_source(file.to_str().unwrap(), &config)?;
-    let file_url = file_source.to_url();
+    let file_url = file_source.as_url();
     assert_eq!(file_url.scheme(), "file");
 
     // Test URL source
     let url_source = validate_source("https://example.com/workflow.wdl", &config)?;
-    let url = url_source.to_url();
+    let url = url_source.as_url();
     assert_eq!(url.as_str(), "https://example.com/workflow.wdl");
 
     // Test Display trait
