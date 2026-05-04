@@ -23,6 +23,7 @@ use line_index::WideEncoding;
 use line_index::WideLineCol;
 use lsp_types::CompletionResponse;
 use lsp_types::DocumentSymbolResponse;
+use lsp_types::FoldingRange;
 use lsp_types::GotoDefinitionResponse;
 use lsp_types::Hover;
 use lsp_types::InlayHint;
@@ -47,6 +48,7 @@ use crate::queue::AnalyzeRequest;
 use crate::queue::CompletionRequest;
 use crate::queue::DocumentSymbolRequest;
 use crate::queue::FindAllReferencesRequest;
+use crate::queue::FoldingRangeRequest;
 use crate::queue::FormatRequest;
 use crate::queue::GotoDefinitionRequest;
 use crate::queue::HoverRequest;
@@ -617,6 +619,28 @@ where
 
         rx.await.map_err(|_| {
             anyhow!("failed to send format request to the queue because the channel has closed")
+        })
+    }
+
+    /// Get all folding ranges in a document.
+    pub async fn folding_range(&self, document: Url) -> Result<Option<Vec<FoldingRange>>> {
+        let (tx, rx) = oneshot::channel();
+        self.sender
+            .send(Request::FoldingRange(FoldingRangeRequest {
+                document,
+                completed: tx,
+            }))
+            .map_err(|_| {
+                anyhow!(
+                    "failed to send folding range request to the queue because the channel has \
+                     closed"
+                )
+            })?;
+
+        rx.await.map_err(|_| {
+            anyhow!(
+                "failed to send folding range request to the queue because the channel has closed"
+            )
         })
     }
 

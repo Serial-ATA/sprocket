@@ -4,6 +4,7 @@ use wdl_analysis::Diagnostics;
 use wdl_analysis::Visitor;
 use wdl_ast::AstToken;
 use wdl_ast::Comment;
+use wdl_ast::CommentKind;
 use wdl_ast::Diagnostic;
 use wdl_ast::Span;
 use wdl_ast::SyntaxElement;
@@ -148,7 +149,7 @@ impl UnusedDocCommentsRule {
 
             if let Some(continued_comment) =
                 sibling.as_token().and_then(|t| Comment::cast(t.clone()))
-                && continued_comment.is_doc_comment()
+                && comment.kind() == CommentKind::Documentation
             {
                 self.skip_count += 1;
                 span_end = continued_comment.span().end();
@@ -261,7 +262,7 @@ impl Visitor for UnusedDocCommentsRule {
 
         // If the visited comment isn't a doc comment, then
         // there's no need to process it!
-        if !comment.is_doc_comment() {
+        if comment.kind() != CommentKind::Documentation {
             return;
         }
 

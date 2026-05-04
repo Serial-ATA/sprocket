@@ -16,6 +16,7 @@ use futures::stream::FuturesUnordered;
 use indexmap::IndexSet;
 use lsp_types::CompletionResponse;
 use lsp_types::DocumentSymbolResponse;
+use lsp_types::FoldingRange;
 use lsp_types::GotoDefinitionResponse;
 use lsp_types::Hover;
 use lsp_types::InlayHint;
@@ -69,6 +70,8 @@ pub enum Request<Context> {
     NotifyIncrementalChange(NotifyIncrementalChangeRequest),
     /// A request to process a document's change.
     NotifyChange(NotifyChangeRequest),
+    /// A request to get all folding ranges in a document.
+    FoldingRange(FoldingRangeRequest),
     /// A request to format a document.
     Format(FormatRequest),
     /// A request to goto definition of a symbol.
@@ -135,6 +138,14 @@ pub struct NotifyChangeRequest {
     pub document: Url,
     /// Whether or not any existing incremental change should be discarded.
     pub discard_pending: bool,
+}
+
+/// Represents a request to get all folding ranges in a document.
+pub struct FoldingRangeRequest {
+    /// The document to be formatted.
+    pub document: Url,
+    /// The sender for completing the request.
+    pub completed: oneshot::Sender<Option<Vec<FoldingRange>>>,
 }
 
 /// Represents a request to format a document.
@@ -398,6 +409,31 @@ where
                     let mut graph = self.graph.write();
                     if let Some(node) = graph.get_index(&document) {
                         graph.get_mut(node).notify_change(discard_pending);
+                    }
+                }
+                Request::FoldingRange(FoldingRangeRequest {
+                    document,
+                    completed,
+                }) => {
+                    let start = Instant::now();
+
+                    let graph = self.graph.read();
+                    match handlers::folding_range(&graph, document) {
+                        Ok(result) => {
+                            debug!(
+                                "folding range request completed in {elapsed:?}",
+                                elapsed = start.elapsed()
+                            );
+
+                            completed.send(Some(result)).ok();
+                        }
+                        Err(err) => {
+                            error!(
+                                "error occurred while completing the folding range request: \
+                                 {err:?}"
+                            );
+                            completed.send(None).ok();
+                        }
                     }
                 }
                 Request::Format(FormatRequest {
