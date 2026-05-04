@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- TODO: PR number -->
 * Added support for the `textDocument/foldingRange` request ([#]()).
+<!-- TODO: PR number -->
+* Added support for the `textDocument/prepareCallHierarchy`, `callHierarchy/incomingCalls`, and
+  `callHierarchy/outgoingCalls` requests ([#]()).
 
 ### Changed
 
