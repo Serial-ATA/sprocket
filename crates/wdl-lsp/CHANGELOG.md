@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- TODO: PR number -->
 * Added support for the `textDocument/foldingRange` request ([#]()).
 
+### Changed
+
+<!-- TODO: PR number -->
+* Improved `textDocument/semanticTokens` output, allowing for better syntax highlighting ([#]()).
+
 ## 0.19.0 - 2026-04-22
 
 ## 0.18.0 - 2026-04-02
