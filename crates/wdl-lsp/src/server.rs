@@ -1022,6 +1022,7 @@ impl<S: 'static> LanguageServer for Server<S> {
         let result = config
             .analyzer
             .call_hierarchy(
+                ProgressToken::default(),
                 params.text_document_position_params.text_document.uri,
                 position,
                 SourcePositionEncoding::UTF16,
@@ -1053,7 +1054,12 @@ impl<S: 'static> LanguageServer for Server<S> {
 
         let result = config
             .analyzer
-            .incoming_calls(params.item.uri, position, SourcePositionEncoding::UTF16)
+            .incoming_calls(
+                ProgressToken::default(),
+                params.item.uri,
+                position,
+                SourcePositionEncoding::UTF16,
+            )
             .await
             .map_err(|e| RpcError {
                 code: ErrorCode::InternalError,
@@ -1081,7 +1087,12 @@ impl<S: 'static> LanguageServer for Server<S> {
 
         let result = config
             .analyzer
-            .outgoing_calls(params.item.uri, position, SourcePositionEncoding::UTF16)
+            .outgoing_calls(
+                ProgressToken::default(),
+                params.item.uri,
+                position,
+                SourcePositionEncoding::UTF16,
+            )
             .await
             .map_err(|e| RpcError {
                 code: ErrorCode::InternalError,
@@ -1110,6 +1121,7 @@ impl<S: 'static> LanguageServer for Server<S> {
         let result = config
             .analyzer
             .goto_definition(
+                ProgressToken::default(),
                 params.text_document_position_params.text_document.uri,
                 position,
                 SourcePositionEncoding::UTF16,
@@ -1139,6 +1151,7 @@ impl<S: 'static> LanguageServer for Server<S> {
         let result = config
             .analyzer
             .find_all_references(
+                ProgressToken::default(),
                 params.text_document_position.text_document.uri,
                 position,
                 SourcePositionEncoding::UTF16,
@@ -1202,6 +1215,7 @@ impl<S: 'static> LanguageServer for Server<S> {
         let result = config
             .analyzer
             .hover(
+                ProgressToken::default(),
                 params.text_document_position_params.text_document.uri,
                 position,
                 SourcePositionEncoding::UTF16,
@@ -1230,6 +1244,7 @@ impl<S: 'static> LanguageServer for Server<S> {
         let result = config
             .analyzer
             .rename(
+                ProgressToken::default(),
                 params.text_document_position.text_document.uri,
                 position,
                 SourcePositionEncoding::UTF16,
@@ -1257,7 +1272,7 @@ impl<S: 'static> LanguageServer for Server<S> {
 
         let result = config
             .analyzer
-            .semantic_tokens(params.text_document.uri)
+            .semantic_tokens(ProgressToken::default(), params.text_document.uri)
             .await
             .map_err(|e| RpcError {
                 code: ErrorCode::InternalError,
@@ -1364,7 +1379,11 @@ impl<S: 'static> LanguageServer for Server<S> {
 
         let result = config
             .analyzer
-            .inlay_hints(params.text_document.uri, params.range)
+            .inlay_hints(
+                ProgressToken::default(),
+                params.text_document.uri,
+                params.range,
+            )
             .await
             .map_err(|e| RpcError {
                 code: ErrorCode::InternalError,
