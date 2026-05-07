@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- TODO: PR number -->
 * Added support for the `textDocument/prepareCallHierarchy`, `callHierarchy/incomingCalls`, and
   `callHierarchy/outgoingCalls` requests ([#]()).
+<!-- TODO: PR number -->
+* Added hover support for doc comments, allowing editors to render preamble comments, and give more surface area
+  to render item docs ([#]()).
 
 ### Changed
 

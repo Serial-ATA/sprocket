@@ -302,3 +302,13 @@ async fn should_hover_blank_line_doc_merges_paragraphs() {
     assert_hover_content(&response, "First paragraph of doc.");
     assert_hover_content(&response, "Second paragraph after blank line.");
 }
+
+#[tokio::test]
+async fn should_render_docs_on_comment_hover() {
+    let mut ctx = setup().await;
+    // Hovering over doc comments should produce the same content as hovering
+    // over the item name.
+    let response = hover_request(&mut ctx, "doc_comments.wdl", Position::new(3, 4)).await;
+    assert_hover_content(&response, "Greets someone by name.");
+    assert_hover_content(&response, "Used for hover doc tests.");
+}
