@@ -924,7 +924,7 @@ dependencies = [
  "serde_json",
  "toml 1.1.2+spec-1.1.0",
  "winnow 1.0.3",
- "yaml-rust2",
+ "yaml-rust2 0.11.0",
 ]
 
 [[package]]
@@ -1474,6 +1474,12 @@ dependencies = [
  "quote",
  "syn 2.0.117",
 ]
+
+[[package]]
+name = "doc-comment"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "780955b8b195a21ab8e4ac6b60dd1dbdcec1dc6c51c0617964b08c81785e12c9"
 
 [[package]]
 name = "dotenvy"
@@ -3046,6 +3052,19 @@ name = "maplit"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d"
+
+[[package]]
+name = "marked-yaml"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a76cf4e66a8ffccfce983161b0faafe61a5ef03fe875ef2e3deb897e4e915fa"
+dependencies = [
+ "doc-comment",
+ "hashlink 0.10.0",
+ "serde",
+ "serde_path_to_error",
+ "yaml-rust2 0.10.4",
+]
 
 [[package]]
 name = "markup5ever"
@@ -6786,7 +6805,9 @@ dependencies = [
  "blake3",
  "fs_extra",
  "futures",
+ "indexmap 2.14.0",
  "line-index",
+ "marked-yaml",
  "parking_lot",
  "pretty_assertions",
  "serde",
@@ -7482,6 +7503,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "388c44dc09d76f1536602ead6d325eb532f5c122f17782bd57fb47baeeb767e2"
 dependencies = [
  "lzma-sys",
+]
+
+[[package]]
+name = "yaml-rust2"
+version = "0.10.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2462ea039c445496d8793d052e13787f2b90e750b833afee748e601c17621ed9"
+dependencies = [
+ "arraydeque",
+ "encoding_rs",
+ "hashlink 0.10.0",
 ]
 
 [[package]]

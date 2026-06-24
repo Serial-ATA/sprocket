@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+<!-- TODO: Add PR number -->
+* Added support for the `textDocument/codeLens` in WDL files and `sprocket dev test`
+  YAML files ([#](https://github.com/stjude-rust-labs/sprocket/pull/)).
+
 ## 0.20.0 - 2026-06-03
 
 ### Added

@@ -15,9 +15,11 @@ anyhow = { workspace = true }
 async-lsp = { workspace = true, features = ["tokio"] }
 futures.workspace = true
 line-index = { workspace = true }
+marked-yaml = { workspace = true, features = ["serde", "serde-path"] }
 parking_lot = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+indexmap = { workspace = true, features = ["serde"] }
 struct-patch = { workspace = true, features = ["nesting"] }
 tokio = { workspace = true }
 tokio-util = { workspace = true, features = ["compat"] }
