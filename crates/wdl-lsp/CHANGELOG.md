@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Added support for the `textDocument/codeLens` request on tasks/workflows with no required
   inputs ([#981](https://github.com/stjude-rust-labs/sprocket/pull/981)).
+<!-- TODO: Add PR number -->
+* Added supprt for the `textDocument/codeLens` request on `sprocket test` YAML files
+  ([#](https://github.com/stjude-rust-labs/sprocket/pull/)).
 
 ## 0.20.1 - 2026-06-26
 

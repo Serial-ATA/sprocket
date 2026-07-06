@@ -18,6 +18,8 @@ line-index = { workspace = true }
 parking_lot = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+indexmap = { workspace = true, features = ["serde"] }
+sprocket-test-types = { path = "../sprocket-test-types", version = "0.1.0" }
 struct-patch = { workspace = true, features = ["nesting"] }
 tokio = { workspace = true }
 tokio-util = { workspace = true, features = ["compat"] }

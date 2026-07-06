@@ -27,6 +27,7 @@ use async_lsp::lsp_types;
 use async_lsp::lsp_types::ClientCapabilities;
 use async_lsp::lsp_types::InitializeParams;
 use async_lsp::lsp_types::InitializedParams;
+use async_lsp::lsp_types::TextDocumentItem;
 use async_lsp::lsp_types::WorkspaceDiagnosticParams;
 use async_lsp::lsp_types::WorkspaceDiagnosticReportResult;
 use async_lsp::lsp_types::WorkspaceFolder;
@@ -183,7 +184,23 @@ impl TestContext {
     /// Creates a file URI for a path within the temporary workspace.
     #[allow(unused)]
     pub fn doc_uri(&self, path: &str) -> Url {
-        Url::from_file_path(self.workspace.path().join(path)).unwrap()
+        Url::from_file_path(self.doc_path(path)).unwrap()
+    }
+
+    /// Creates a file path within the temporary workspace.
+    pub fn doc_path(&self, path: &str) -> PathBuf {
+        self.workspace.path().join(path)
+    }
+
+    /// Create a [`TextDocumentItem`] for the file within the temporary
+    /// workspace.
+    pub fn text_document(&self, path: &str, language: &str) -> TextDocumentItem {
+        TextDocumentItem {
+            uri: self.doc_uri(path),
+            language_id: String::from(language),
+            version: 0,
+            text: fs::read_to_string(self.doc_path(path)).unwrap(),
+        }
     }
 
     /// Performs the LSP initialization handshake and returns the initial

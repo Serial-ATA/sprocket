@@ -30,7 +30,7 @@ mod version;
 ///
 /// Validation visitors receive a diagnostics collection during
 /// visitation of the AST.
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct Diagnostics(pub(crate) Vec<Diagnostic>);
 
 impl Diagnostics {
