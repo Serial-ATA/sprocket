@@ -7,11 +7,17 @@ use std::path::PathBuf;
 use criterion::BenchmarkGroup;
 use criterion::Criterion;
 use criterion::measurement::Measurement;
+use tokio::runtime::Handle;
 use url::Url;
 use wdl::analysis::AnalysisResult;
 use wdl::analysis::Analyzer;
 use wdl::analysis::Config as AnalysisConfig;
+use wdl::analysis::IncrementalChange;
+use wdl::analysis::SourceEdit;
+use wdl::analysis::SourcePosition;
+use wdl::analysis::SourcePositionEncoding;
 
+use crate::common::LargeWorkspace;
 use crate::get_workflows_repo;
 
 /// The configuration for running an analysis benchmark.
@@ -180,4 +186,127 @@ pub fn bench(c: &mut Criterion) {
     corpus_group.finish();
 
     drop(workflows_repo);
+
+    bench_incremental_edits(c);
+}
+
+/// Benchmarks of incremental edits.
+fn bench_incremental_edits(c: &mut Criterion) {
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+
+    let workspace = LargeWorkspace::setup();
+
+    let _guard = runtime.enter();
+
+    let mut group = c.benchmark_group("incremental edits");
+    edit_large_import_chain(runtime.handle(), &mut group, &workspace);
+    edit_large_document(runtime.handle(), &mut group, &workspace);
+    group.finish();
+}
+
+/// Benchmarks editing a document in a large import chain.
+fn edit_large_import_chain<M: Measurement>(
+    runtime: &Handle,
+    group: &mut BenchmarkGroup<'_, M>,
+    workspace: &LargeWorkspace,
+) {
+    let config = AnalysisConfig::default();
+    let analyzer = Analyzer::new(config, |_, _, _, _| async {});
+    runtime.block_on(async {
+        analyzer.add_document(workspace.main.clone()).await.unwrap();
+        analyzer.analyze(()).await.unwrap();
+    });
+
+    // Every document depends on this, should cause a re-analysis of the entire
+    // workspace
+    let base_dep = workspace.dependencies.first().cloned().unwrap();
+
+    let mut version = 1;
+    group.bench_function("edit base document", |b| {
+        b.iter(|| {
+            version += 1;
+            // Sprinkle some whitespace around the document
+            let change = IncrementalChange {
+                version,
+                start: None,
+                edits: vec![
+                    SourceEdit::new(
+                        SourcePosition::new(0, 0)..SourcePosition::new(0, 0),
+                        SourcePositionEncoding::UTF8,
+                        " ",
+                    ),
+                    SourceEdit::new(
+                        SourcePosition::new(5, 0)..SourcePosition::new(5, 0),
+                        SourcePositionEncoding::UTF8,
+                        "\t",
+                    ),
+                    SourceEdit::new(
+                        SourcePosition::new(10, 3)..SourcePosition::new(10, 3),
+                        SourcePositionEncoding::UTF8,
+                        " ",
+                    ),
+                ],
+            };
+            analyzer
+                .notify_incremental_change(base_dep.clone(), change)
+                .unwrap();
+            let results = runtime
+                .block_on(analyzer.analyze_document((), workspace.main.clone()))
+                .unwrap();
+            assert!(!results.is_empty());
+        })
+    });
+}
+
+/// Benchmarks editing a large standalone document.
+fn edit_large_document<M: Measurement>(
+    runtime: &Handle,
+    group: &mut BenchmarkGroup<'_, M>,
+    workspace: &LargeWorkspace,
+) {
+    let config = AnalysisConfig::default();
+    let analyzer = Analyzer::new(config, |_, _, _, _| async {});
+    runtime.block_on(async {
+        analyzer.add_document(workspace.main.clone()).await.unwrap();
+        analyzer.analyze(()).await.unwrap();
+    });
+
+    let mut version = 1;
+    group.bench_function("edit large document", |b| {
+        b.iter(|| {
+            version += 1;
+            // Sprinkle some whitespace around the document
+            let change = IncrementalChange {
+                version,
+                start: None,
+                edits: vec![
+                    SourceEdit::new(
+                        SourcePosition::new(0, 0)..SourcePosition::new(0, 0),
+                        SourcePositionEncoding::UTF8,
+                        " ",
+                    ),
+                    SourceEdit::new(
+                        SourcePosition::new(5, 0)..SourcePosition::new(5, 0),
+                        SourcePositionEncoding::UTF8,
+                        "\t",
+                    ),
+                    SourceEdit::new(
+                        SourcePosition::new(10, 3)..SourcePosition::new(10, 3),
+                        SourcePositionEncoding::UTF8,
+                        " ",
+                    ),
+                ],
+            };
+            analyzer
+                .notify_incremental_change(workspace.main.clone(), change)
+                .unwrap();
+            let results = runtime
+                .block_on(analyzer.analyze_document((), workspace.main.clone()))
+                .unwrap();
+            assert!(!results.is_empty());
+        })
+    });
 }

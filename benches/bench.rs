@@ -83,8 +83,7 @@ use zip::ZipArchive;
 mod analysis;
 mod sprocket;
 
-// Match the global allocator used by the `sprocket` binary so benchmarks
-// reflect real execution.
+/// The global allocator.
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 

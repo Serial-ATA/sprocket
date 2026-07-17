@@ -253,6 +253,10 @@ toml = { workspace = true }
 walkdir.workspace = true
 zip = { workspace = true, features = ["deflate"] }
 
+[profile.bench]
+inherits = "release"
+debug = true
+
 [lints]
 workspace = true
 
@@ -267,3 +271,9 @@ harness = false
 [[bench]]
 name = "bench"
 harness = false
+
+[[bench]]
+name = "edit_large_import_chain"
+path = "benches/analysis/edit_large_import_chain.rs"
+harness = false
+
