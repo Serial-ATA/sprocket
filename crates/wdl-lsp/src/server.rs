@@ -164,7 +164,7 @@ impl ClientSupport {
 
 /// Represents a progress token for displaying work progress in the client.
 #[derive(Debug, Clone, Default)]
-struct ProgressToken(Option<String>);
+pub(crate) struct ProgressToken(Option<String>);
 
 impl ProgressToken {
     /// Constructs a new progress token.
@@ -396,7 +396,7 @@ pub(crate) struct ServerState<S> {
     /// The current set of workspace folders.
     folders: Vec<WorkspaceFolder>,
     /// Mutable configuration fields.
-    config: ServerConfig,
+    pub(crate) config: ServerConfig,
     /// Level filter reload handle.
     log_handle: Option<FilterReloadHandle<S>>,
     /// Known `sprocket dev test` YAML files.
@@ -447,11 +447,11 @@ pub struct Server<S> {
 
 /// The server config and dependent fields.
 #[derive(Debug)]
-struct ServerConfig {
+pub(crate) struct ServerConfig {
     /// User-controlled options for the server.
     options: UserOptions,
     /// The analyzer used to analyze documents.
-    analyzer: Analyzer<ProgressToken>,
+    pub(crate) analyzer: Analyzer<ProgressToken>,
 }
 
 /// Create an [`Analyzer`] validator for the current LSP configuration.
@@ -1094,6 +1094,15 @@ impl<S: 'static> Server<S> {
     ) {
         normalize_uri_path(&mut params.text_document.uri);
 
+        if is_sprocket_test_file(&params.text_document.uri) {
+            let _ = tx.send(
+                handlers::diagnostic::document_diagnostic(params, state, options)
+                    .await
+                    .map_err(|e| ResponseError::new(ErrorCode::INTERNAL_ERROR, e)),
+            );
+            return;
+        }
+
         let results = state
             .config
             .analyzer
@@ -1102,13 +1111,15 @@ impl<S: 'static> Server<S> {
             .map_err(|e| ResponseError::new(ErrorCode::INTERNAL_ERROR, e))
             .and_then(|results| {
                 let mut matcher = options.baseline.as_ref().map(|b| b.matcher());
-                proto::document_diagnostic_report(params, results, &options.name, matcher.as_mut())
-                    .ok_or_else(|| {
-                        ResponseError::new(
-                            ErrorCode::REQUEST_FAILED,
-                            "no diagnostic report produced",
-                        )
-                    })
+                proto::analysis_document_diagnostic_report(
+                    params,
+                    results,
+                    &options.name,
+                    matcher.as_mut(),
+                )
+                .ok_or_else(|| {
+                    ResponseError::new(ErrorCode::REQUEST_FAILED, "no diagnostic report produced")
+                })
             });
 
         let _ = tx.send(results);
