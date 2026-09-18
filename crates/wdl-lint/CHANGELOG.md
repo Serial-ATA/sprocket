@@ -7,6 +7,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Added
+
+* Added `MixedDocSources` lint to enforce consistent usage of documentation sources project-wide ([#1230](https://github.com/stjude-rust-labs/sprocket/pull/1230)).
+
 ### Fixed
 
 * `MetaSections` lint rule no longer requires `parameter_meta` for `struct`s whose members are fully
