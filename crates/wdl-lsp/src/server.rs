@@ -30,7 +30,6 @@ use futures::future::BoxFuture;
 use serde::Deserialize;
 use serde::Deserializer;
 use serde_json::Value;
-use serde_json::to_value;
 use struct_patch::Patch;
 use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::sync::oneshot::Sender;
@@ -39,12 +38,14 @@ use tracing::debug;
 use tracing::debug_span;
 use tracing::error;
 use tracing::info;
+use tracing::trace;
 use tracing::warn;
 use tracing_subscriber::EnvFilter;
 use url::Url;
 use uuid::Uuid;
 use wdl_analysis::Analyzer;
 use wdl_analysis::Config as AnalysisConfig;
+use wdl_analysis::DocumentRename;
 use wdl_analysis::FeatureFlags;
 use wdl_analysis::FormatConfig;
 use wdl_analysis::IncrementalChange;
@@ -54,7 +55,6 @@ use wdl_analysis::SourcePositionEncoding;
 use wdl_analysis::Validator;
 use wdl_analysis::handlers::WDL_SEMANTIC_TOKEN_MODIFIERS;
 use wdl_analysis::handlers::WDL_SEMANTIC_TOKEN_TYPES;
-use wdl_analysis::path_to_uri;
 use wdl_lint::Linter;
 use wdl_lint::Rule;
 use wdl_lint::RuleSeverity;
@@ -111,9 +111,6 @@ fn normalize_uri_path(uri: &mut Url) {
 /// LSP features supported by the client.
 #[derive(Clone, Copy, Debug, Default)]
 struct ClientSupport {
-    /// Whether or not the client supports dynamic registration of watched
-    /// files.
-    pub watched_files: bool,
     /// Whether or not the client supports pull diagnostics (workspace and text
     /// document).
     pub pull_diagnostics: bool,
@@ -128,16 +125,6 @@ impl ClientSupport {
     /// Creates a new client features from the given client capabilities.
     pub fn new(capabilities: &ClientCapabilities) -> Self {
         Self {
-            watched_files: capabilities
-                .workspace
-                .as_ref()
-                .map(|c| {
-                    c.did_change_watched_files
-                        .as_ref()
-                        .map(|c| c.dynamic_registration == Some(true))
-                        .unwrap_or(false)
-                })
-                .unwrap_or(false),
             pull_diagnostics: capabilities
                 .text_document
                 .as_ref()
@@ -549,10 +536,14 @@ enum Notification {
     DidClose(DidCloseTextDocumentParams),
     /// The workspace folders changed.
     DidChangeWorkspaceFolders(DidChangeWorkspaceFoldersParams),
+    /// Documents were created.
+    DidCreate(CreateFilesParams),
+    /// Documents were renamed.
+    DidRenameFiles(RenameFilesParams),
+    /// Documents were deleted.
+    DidDelete(DeleteFilesParams),
     /// The [`UserOptions`] changed.
     DidChangeConfiguration(DidChangeConfigurationParams),
-    /// A watched file/folder was changed.
-    DidChangeWatchedFiles(DidChangeWatchedFilesParams),
 }
 
 /// LSP requests sent from the client.
@@ -633,6 +624,11 @@ enum Request {
     SemanticTokensFull {
         params: SemanticTokensParams,
         tx: RequestResponseSender<Option<SemanticTokensResult>>,
+    },
+    /// `workspace/willRenameFiles`
+    WillRenameFiles {
+        params: RenameFilesParams,
+        tx: RequestResponseSender<Option<WorkspaceEdit>>,
     },
     /// `textDocument/signatureHelp`
     SignatureHelp {
@@ -914,6 +910,18 @@ impl<S: 'static> Server<S> {
                         let state = state.read().await;
                         Self::did_change_workspace_folders(params, &state).await;
                     }
+                    Notification::DidCreate(params) => {
+                        let state = state.read().await;
+                        Self::did_create_files(params, &state).await;
+                    }
+                    Notification::DidRenameFiles(params) => {
+                        let state = state.read().await;
+                        Self::did_rename_files(params, &state).await;
+                    }
+                    Notification::DidDelete(params) => {
+                        let state = state.read().await;
+                        Self::did_delete_files(params, &state).await;
+                    }
                     Notification::DidChangeConfiguration(params) => {
                         let mut state = state.write().await;
                         Self::did_change_configuration(
@@ -923,10 +931,6 @@ impl<S: 'static> Server<S> {
                             &options,
                         )
                         .await;
-                    }
-                    Notification::DidChangeWatchedFiles(params) => {
-                        let state = state.read().await;
-                        Self::did_change_watched_files(params, &state).await;
                     }
                 },
                 Message::Request(request) => match request {
@@ -989,6 +993,10 @@ impl<S: 'static> Server<S> {
                     Request::SemanticTokensFull { params, tx } => {
                         let state = state.read().await;
                         Self::semantic_tokens_full(params, tx, &state).await
+                    }
+                    Request::WillRenameFiles { params, tx } => {
+                        let state = state.read().await;
+                        Self::will_rename_files(params, tx, &state).await
                     }
                     Request::SignatureHelp { params, tx } => {
                         let state = state.read().await;
@@ -1173,6 +1181,18 @@ impl<S: 'static> Server<S> {
 
         let _ = tx.send(result);
     }
+}
+
+/// Converts a URI into an existing WDL file path.
+fn to_existing_wdl_file_path(uri: &Url) -> Option<PathBuf> {
+    if let Ok(path) = uri.to_file_path()
+        && path.is_file()
+        && path.extension().and_then(OsStr::to_str) == Some("wdl")
+    {
+        return Some(path);
+    }
+
+    None
 }
 
 impl<S: 'static> Server<S> {
@@ -1395,6 +1415,31 @@ impl<S: 'static> Server<S> {
             .config
             .analyzer
             .semantic_tokens(ProgressToken::default(), params.text_document.uri)
+            .await
+            .map_err(|e| ResponseError::new(ErrorCode::INTERNAL_ERROR, e));
+
+        let _ = tx.send(result);
+    }
+
+    /// `workspace/willRenameFiles` request handler.
+    async fn will_rename_files(
+        params: RenameFilesParams,
+        tx: RequestResponseSender<Option<WorkspaceEdit>>,
+        state: &ServerState<S>,
+    ) {
+        let renames = params
+            .files
+            .into_iter()
+            .map(|rename| DocumentRename {
+                document: Url::from_str(&rename.old_uri).expect("verified before"),
+                new_uri: Url::from_str(&rename.new_uri).expect("verified before"),
+            })
+            .collect();
+
+        let result = state
+            .config
+            .analyzer
+            .rename_documents(ProgressToken::default(), renames)
             .await
             .map_err(|e| ResponseError::new(ErrorCode::INTERNAL_ERROR, e));
 
@@ -1637,6 +1682,56 @@ impl<S: 'static> Server<S> {
         }
     }
 
+    /// `workspace/didCreateFiles` notification handler.
+    async fn did_create_files(params: CreateFilesParams, state: &ServerState<S>) {
+        for file in params.files {
+            let uri = Url::from_str(&file.uri).expect("verified before");
+            if to_existing_wdl_file_path(&uri).is_none() {
+                continue;
+            }
+
+            debug!("document `{uri}` has been created");
+            if let Err(e) = state.config.analyzer.add_document(uri).await {
+                error!("failed to delete renamed documents from analyzer: {e}");
+            }
+        }
+    }
+
+    /// `workspace/didRenameFiles` notification handler.
+    async fn did_rename_files(params: RenameFilesParams, state: &ServerState<S>) {
+        let to_delete = Vec::new();
+        for rename in params.files {
+            trace!(
+                "renaming document `{}` -> `{}`",
+                rename.old_uri, rename.new_uri
+            );
+
+            let uri = Url::from_str(&rename.new_uri).expect("verified before");
+            if let Err(e) = state.config.analyzer.add_document(uri.clone()).await {
+                error!("failed to add document `{uri}` to analyzer: {e}");
+            }
+        }
+
+        if let Err(e) = state.config.analyzer.delete_documents(to_delete).await {
+            error!("failed to delete renamed documents from analyzer: {e}");
+        }
+    }
+
+    /// `workspace/didDeleteFiles` notification handler.
+    async fn did_delete_files(params: DeleteFilesParams, state: &ServerState<S>) {
+        let to_delete = params
+            .files
+            .into_iter()
+            .map(|file| {
+                debug!("`{uri}` has been deleted", uri = file.uri);
+                Url::from_str(&file.uri).expect("verified before")
+            })
+            .collect();
+        if let Err(e) = state.config.analyzer.delete_documents(to_delete).await {
+            error!("failed to delete renamed documents from analyzer: {e}");
+        }
+    }
+
     /// `workspace/didChangeConfiguration` notification handler.
     async fn did_change_configuration(
         _params: DidChangeConfigurationParams,
@@ -1664,65 +1759,6 @@ impl<S: 'static> Server<S> {
             Err(e) => error!("failed to fetch workspace configuration: {e}"),
         }
     }
-
-    /// `workspace/didChangeWatchedFiles` notification handler.
-    async fn did_change_watched_files(params: DidChangeWatchedFilesParams, state: &ServerState<S>) {
-        /// Converts a URI into an existing WDL file path.
-        fn to_existing_wdl_file_path(uri: &Url) -> Option<PathBuf> {
-            if let Ok(path) = uri.to_file_path()
-                && path.is_file()
-                && path.extension().and_then(OsStr::to_str) == Some("wdl")
-            {
-                return Some(path);
-            }
-
-            None
-        }
-
-        let mut added = Vec::new();
-        let mut deleted = Vec::new();
-        for mut event in params.changes {
-            normalize_uri_path(&mut event.uri);
-
-            match event.typ {
-                FileChangeType::CREATED => {
-                    let Some(path) = to_existing_wdl_file_path(&event.uri) else {
-                        continue;
-                    };
-
-                    debug!("document `{uri}` has been created", uri = event.uri);
-                    added.push(path_to_uri(&path).expect("should convert to uri"));
-                }
-                FileChangeType::CHANGED => {
-                    if to_existing_wdl_file_path(&event.uri).is_some() {
-                        debug!("document `{uri}` has been changed", uri = event.uri);
-                        if let Err(e) = state.config.analyzer.notify_change(event.uri, false) {
-                            error!("failed to notify change: {e}");
-                        }
-                    }
-                }
-                FileChangeType::DELETED => {
-                    debug!("`{uri}` has been deleted", uri = event.uri);
-                    deleted.push(event.uri);
-                }
-                _ => {}
-            }
-        }
-
-        if !added.is_empty() {
-            for uri in added {
-                if let Err(e) = state.config.analyzer.add_document(uri).await {
-                    error!("failed to add documents to analyzer: {e}");
-                }
-            }
-        }
-
-        if !deleted.is_empty()
-            && let Err(e) = state.config.analyzer.delete_documents(deleted).await
-        {
-            error!("failed to remove documents from analyzer: {e}");
-        }
-    }
 }
 
 /// Converts a URI into a WDL file path.
@@ -1736,6 +1772,30 @@ fn to_wdl_file_path(uri: &Url) -> Option<PathBuf> {
     None
 }
 
+/// Normalize and strip out insignificant files in [`RenameFilesParams`].
+fn normalize_file_renames(renames: RenameFilesParams) -> RenameFilesParams {
+    RenameFilesParams {
+        files: renames
+            .files
+            .into_iter()
+            .filter_map(|mut file| {
+                let mut old_uri = Url::from_str(&file.old_uri).ok()?;
+                let mut new_uri = Url::from_str(&file.new_uri).ok()?;
+                normalize_uri_path(&mut old_uri);
+                normalize_uri_path(&mut new_uri);
+
+                to_wdl_file_path(&old_uri)?;
+                to_wdl_file_path(&new_uri)?;
+
+                file.old_uri = old_uri.to_string();
+                file.new_uri = new_uri.to_string();
+
+                Some(file)
+            })
+            .collect::<Vec<_>>(),
+    }
+}
+
 impl<S: 'static> LanguageServer for Server<S> {
     type Error = ResponseError;
     type NotifyResult = ControlFlow<async_lsp::Result<()>>;
@@ -1744,6 +1804,22 @@ impl<S: 'static> LanguageServer for Server<S> {
         &mut self,
         params: InitializeParams,
     ) -> BoxFuture<'static, Result<InitializeResult, Self::Error>> {
+        fn significant_file_filters() -> Vec<FileOperationFilter> {
+            vec![
+                // WDL files
+                FileOperationFilter {
+                    scheme: None,
+                    pattern: FileOperationPattern {
+                        glob: "**/*.wdl".to_string(),
+                        matches: Some(FileOperationPatternKind::File),
+                        options: Some(FileOperationPatternOptions {
+                            ignore_case: Some(true),
+                        }),
+                    },
+                },
+            ]
+        }
+
         let client_support = ClientSupport::new(&params.capabilities);
 
         if !client_support.pull_diagnostics {
@@ -1800,7 +1876,22 @@ impl<S: 'static> LanguageServer for Server<S> {
                             supported: Some(true),
                             change_notifications: Some(OneOf::Left(true)),
                         }),
-                        ..Default::default()
+                        file_operations: Some(WorkspaceFileOperationsServerCapabilities {
+                            did_create: Some(FileOperationRegistrationOptions {
+                                filters: significant_file_filters(),
+                            }),
+                            will_create: None,
+                            did_rename: Some(FileOperationRegistrationOptions {
+                                filters: significant_file_filters(),
+                            }),
+                            will_rename: Some(FileOperationRegistrationOptions {
+                                filters: significant_file_filters(),
+                            }),
+                            did_delete: Some(FileOperationRegistrationOptions {
+                                filters: significant_file_filters(),
+                            }),
+                            will_delete: None,
+                        }),
                     }),
                     workspace_symbol_provider: Some(OneOf::Left(true)),
                     diagnostic_provider: Some(DiagnosticServerCapabilities::Options(
@@ -1937,6 +2028,19 @@ impl<S: 'static> LanguageServer for Server<S> {
         } else {
             Box::pin(async { Ok(None) })
         }
+    }
+
+    fn will_rename_files(
+        &mut self,
+        mut params: RenameFilesParams,
+    ) -> BoxFuture<'static, Result<Option<WorkspaceEdit>, Self::Error>> {
+        params = normalize_file_renames(params);
+
+        if params.files.is_empty() {
+            return Box::pin(async { Ok(None) });
+        }
+
+        self.request(move |tx| Message::Request(Request::WillRenameFiles { params, tx }))
     }
 
     fn inlay_hint(
@@ -2091,24 +2195,6 @@ impl<S: 'static> LanguageServer for Server<S> {
         let client_support = self.client_support.get().cloned().expect("should exist");
         tokio::task::spawn(async move {
             let mut registrations = Vec::new();
-            if client_support.watched_files {
-                registrations.push(Registration {
-                    id: Uuid::new_v4().to_string(),
-                    method: "workspace/didChangeWatchedFiles".into(),
-                    register_options: Some(
-                        to_value(DidChangeWatchedFilesRegistrationOptions {
-                            watchers: vec![FileSystemWatcher {
-                                // We use a generic glob so we can be notified for when directories,
-                                // which might contain WDL documents, are deleted
-                                glob_pattern: GlobPattern::String("**/*".to_string()),
-                                kind: None,
-                            }],
-                        })
-                        .expect("should convert to value"),
-                    ),
-                });
-            }
-
             if client_support.did_change_configuration {
                 registrations.push(Registration {
                     id: Uuid::new_v4().to_string(),
@@ -2145,6 +2231,49 @@ impl<S: 'static> LanguageServer for Server<S> {
         ))
     }
 
+    fn did_create_files(&mut self, params: CreateFilesParams) -> Self::NotifyResult {
+        let params = CreateFilesParams {
+            files: params
+                .files
+                .into_iter()
+                .filter_map(|mut f| {
+                    let mut uri = Url::from_str(&f.uri).ok()?;
+                    normalize_uri_path(&mut uri);
+
+                    f.uri = uri.to_string();
+                    Some(f)
+                })
+                .collect(),
+        };
+        self.queue(Message::Notification(Notification::DidCreate(params)))
+    }
+
+    fn did_rename_files(&mut self, mut params: RenameFilesParams) -> Self::NotifyResult {
+        params = normalize_file_renames(params);
+        if params.files.is_empty() {
+            return ControlFlow::Continue(());
+        }
+
+        self.queue(Message::Notification(Notification::DidRenameFiles(params)))
+    }
+
+    fn did_delete_files(&mut self, params: DeleteFilesParams) -> Self::NotifyResult {
+        let params = DeleteFilesParams {
+            files: params
+                .files
+                .into_iter()
+                .filter_map(|mut f| {
+                    let mut uri = Url::from_str(&f.uri).ok()?;
+                    normalize_uri_path(&mut uri);
+
+                    f.uri = uri.to_string();
+                    Some(f)
+                })
+                .collect(),
+        };
+        self.queue(Message::Notification(Notification::DidDelete(params)))
+    }
+
     fn did_change_configuration(
         &mut self,
         params: DidChangeConfigurationParams,
@@ -2167,14 +2296,5 @@ impl<S: 'static> LanguageServer for Server<S> {
     fn did_close(&mut self, mut params: DidCloseTextDocumentParams) -> Self::NotifyResult {
         normalize_uri_path(&mut params.text_document.uri);
         self.queue(Message::Notification(Notification::DidClose(params)))
-    }
-
-    fn did_change_watched_files(
-        &mut self,
-        params: DidChangeWatchedFilesParams,
-    ) -> Self::NotifyResult {
-        self.queue(Message::Notification(Notification::DidChangeWatchedFiles(
-            params,
-        )))
     }
 }

@@ -18,6 +18,8 @@ use wdl_ast::SyntaxKind;
 use wdl_ast::SyntaxToken;
 use wdl_ast::TreeToken;
 use wdl_ast::v1;
+use wdl_ast::v1::ImportSource;
+use wdl_ast::v1::ImportStatement;
 
 use crate::SourcePosition;
 use crate::SourcePositionEncoding;
@@ -167,6 +169,142 @@ pub fn find_all_references(
     }
 
     Ok(locations)
+}
+
+/// A reference to a document's path or namespace name.
+#[derive(Debug)]
+pub enum DocumentReference {
+    /// A reference to the document's path (e.g., in an import statement)
+    ///
+    /// NOTE: This only includes the path, not the surrounding quotes.
+    Path(Location),
+    /// A reference to the document via it's implicit namespace
+    ///
+    /// When importing a document via:
+    ///
+    /// ```wdl
+    /// import "foo.wdl"
+    /// ```
+    ///
+    /// The namespace `foo` is created implicitly:
+    ///
+    /// ```wdl
+    /// import "foo.wdl"
+    ///
+    /// workspace bar {
+    ///     call foo.hello_world
+    /// }
+    /// ```
+    Name(Location),
+}
+
+/// Find all references to the specified `document`.
+pub fn find_document_references(
+    graph: &DocumentGraph,
+    target_uri: &Url,
+) -> Result<Vec<DocumentReference>> {
+    let Some(index) = graph.get_index(target_uri) else {
+        return Ok(Vec::new());
+    };
+
+    let Ok(_document_path) = target_uri.to_file_path() else {
+        return Ok(Vec::new()); // Can only work with local files
+    };
+
+    let mut references = Vec::new();
+    for dep in graph.transitive_dependents(index) {
+        let node = graph.get(dep);
+        let document = match node.document() {
+            Some(doc) => doc,
+            None => continue,
+        };
+
+        let lines = match node.parse_state().lines() {
+            Some(lines) => lines,
+            None => continue,
+        };
+
+        let Ok(_dep_path) = node.uri().to_file_path() else {
+            continue;
+        };
+
+        for import in document.root().children::<ImportStatement>() {
+            match import.source() {
+                ImportSource::Uri(uri) => {
+                    let Some(v1::LiteralStringText::Token(text)) = uri.text() else {
+                        continue;
+                    };
+
+                    let import_uri = match node.uri().join(text.text()) {
+                        Ok(uri) => uri,
+                        Err(_) => continue,
+                    };
+
+                    let import_path = import_uri.to_file_path().ok();
+                    let target_path = target_uri.to_file_path().ok();
+
+                    if import_uri != *target_uri
+                        || (import_path.is_none() || import_path != target_path)
+                    {
+                        continue;
+                    }
+
+                    let loc = location_from_span(node.uri(), text.span(), lines)?;
+                    references.push(DocumentReference::Path(loc));
+
+                    if import.explicit_namespace().is_some()
+                        || import.form() != v1::ImportForm::Namespace
+                    {
+                        continue;
+                    }
+
+                    let Some((ns, ns_span)) = import.namespace() else {
+                        continue;
+                    };
+
+                    let ns_loc = location_from_span(node.uri(), ns_span, lines)?;
+
+                    for token in document
+                        .root()
+                        .inner()
+                        .descendants_with_tokens()
+                        .filter_map(|el| {
+                            el.into_token()
+                                .filter(|token| token.kind() == SyntaxKind::Ident)
+                        })
+                    {
+                        if token.text() != ns {
+                            continue;
+                        }
+
+                        let token_pos = position(lines, token.text_range().start())
+                            .context("failed to convert token position")?;
+                        let source_pos = SourcePosition::new(token_pos.line, token_pos.character);
+
+                        let resolved_location = handlers::goto_definition(
+                            graph,
+                            node.uri(),
+                            source_pos,
+                            SourcePositionEncoding::UTF8,
+                        )
+                        .ok()
+                        .flatten();
+
+                        if let Some(location) = resolved_location
+                            && location == ns_loc
+                        {
+                            let reference_location =
+                                location_from_span(node.uri(), token.span(), lines)?;
+                            references.push(DocumentReference::Name(reference_location));
+                        }
+                    }
+                }
+                _ => continue,
+            }
+        }
+    }
+
+    Ok(references)
 }
 
 /// Collects references to the target symbol from a single document.
